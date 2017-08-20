@@ -1,0 +1,112 @@
+<template>
+    <!--
+      Replace following "div" with
+      "<router-view class="layout-view">" component
+      if using subRoutes
+    -->
+    <div class="layout-view">
+      <q-fixed-position corner="bottom-right" :offset="[18, 18]">
+        <q-btn round color="primary" @click="add_job" icon="add" />
+      </q-fixed-position>
+      
+      <q-list no-border striped>
+        <q-list-header>Feines</q-list-header>
+        <q-item to="/form/45">
+            <q-item-side left icon="create" />
+            <q-item-main>
+              <q-item-tile label>Done</q-item-tile>
+              <q-item-tile sublabel>Open</q-item-tile>
+            </q-item-main>
+            <q-item-side right icon="keyboard_arrow_right" />
+          </router-link>
+        </q-item>
+
+        <q-item to="/form/46">
+            <q-item-side left icon="hourglass_empty" />
+            <q-item-main>
+              <q-item-tile label>Pending</q-item-tile>
+              <q-item-tile sublabel>Urgent!</q-item-tile>
+            </q-item-main>
+            <q-item-side right icon="keyboard_arrow_right" />
+          </router-link>
+        </q-item>
+
+        <q-item to="/form/47">
+            <q-item-side left icon="check" />
+            <q-item-main>
+              <q-item-tile label>Done</q-item-tile>
+              <q-item-tile sublabel>Completed!</q-item-tile>
+            </q-item-main>
+            <q-item-side right icon="keyboard_arrow_right" />
+          </router-link>
+        </q-item>
+
+      </q-list>
+
+    </div>
+</template>
+
+<script>
+
+import {
+  QLayout,
+  QToolbar,
+  QToolbarTitle,
+  QBtn,
+  QIcon,
+  QList,
+  QListHeader,
+  QItem,
+  QItemSide,
+  QItemMain,
+  QItemTile,
+  QFixedPosition
+} from 'quasar'
+
+export default {
+  name: 'index',
+  components: {
+    QLayout,
+    QToolbar,
+    QToolbarTitle,
+    QBtn,
+    QIcon,
+    QList,
+    QListHeader,
+    QItem,
+    QItemSide,
+    QItemMain,
+    QItemTile,
+    QFixedPosition
+  },
+  data () {
+    return {
+    }
+  },
+  computed: {
+  },
+  methods: {
+    add_job () {
+      this.$router.push('/form/add')
+    }
+  },
+  mounted () {
+  },
+  beforeDestroy () {
+  }
+}
+</script>
+
+<style lang="stylus">
+.logo-container
+  width 192px
+  height 268px
+  perspective 800px
+  position absolute
+  top 50%
+  left 50%
+  transform translateX(-50%) translateY(-50%)
+.logo
+  position absolute
+  transform-style preserve-3d
+</style>
