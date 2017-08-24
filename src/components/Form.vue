@@ -5,25 +5,32 @@
     <q-select
       v-model="contract"
       float-label="Lot"
-      radio
      :options="contractOptions"
     />
 
+<div style="display: flex; align-items: center">
     <q-select
+      ref="sectorSelect"
       v-model="location"
       float-label="Sector"
-      radio
-      filter
-     :options="locationOptions"
+      :options="locationOptions"
+      style="flex-grow: 1;"
+      @created="searchSector"
     />
 
-    <q-input color="amber" v-model="terms" placeholder="Type 'fre'">
+    <q-input color="amber" v-model="terms" placeholder="Type 'fre'"
+             class="hidden" style="flex-grow: 1;">
       <q-autocomplete
+        ref="sectorSearch"
         @search="search"
         :min-characters="2"
         @selected="selected"
       />
     </q-input>  
+
+    <q-btn color="grey" icon="search" @click="searchSector" />
+</div>
+
 
   </div>
 </template>
@@ -48,7 +55,8 @@ import {
   QInput,
   Toast,
   filter,
-  QSelect
+  QSelect,
+  QBtn
 } from 'quasar'
 
 function parseCountries () {
@@ -67,7 +75,8 @@ export default {
     QAutocomplete,
     QSearch,
     QInput,
-    QSelect
+    QSelect,
+    QBtn
   },
   data () {
     return {
@@ -91,6 +100,11 @@ export default {
     selected (item) {
       console.log(item)
       Toast.create(`Selected suggestion "${item.label}"`)
+    },
+    searchSector () {
+      console.log('Search!!!')
+      // this.$refs.sectorSelect.$el.addClass('hidden')
+      // this.$refs.sectorSearch.$el.removeClass('hidden')
     }
   }
 }
