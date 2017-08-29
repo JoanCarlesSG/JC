@@ -62,6 +62,9 @@
  * Root component
  */
 
+import Vue from 'vue'
+import axios from 'axios'
+
 import {
   QLayout,
   QToolbar,
@@ -87,6 +90,36 @@ export default {
     QItem,
     QItemSide,
     QItemMain
+  },
+  data: function () {
+    return {
+      startup: [],
+      errors: [],
+      sharedState: Vue.store.state
+    }
+  },
+  created: function () {
+    // Fetches posts when the component is created.
+    axios.get('http://xenial.local/ajgirona/feines_proveidors/startup')
+      .then(response => {
+        // JSON responses are automatically parsed.
+        this.startup = response.data
+        console.log(this.startup)
+      })
+      .catch(e => {
+        this.errors.push(e)
+        console.log(this.errors)
+        // this.$router.push('/login')
+      })
+
+    // async / await version (created() becomes async created())
+    //
+    // try {
+    //   const response = await axios.get(`http://jsonplaceholder.typicode.com/posts`)
+    //   this.posts = response.data
+    // } catch (e) {
+    //   this.errors.push(e)
+    // }
   }
 }
 </script>

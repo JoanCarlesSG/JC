@@ -23,6 +23,7 @@ export default new VueRouter({
 
   routes: [
     { path: '/', component: load('Index') },
+    { path: '/login', component: load('Login') },
     { path: '/form/:id', component: load('Form') },
 
     // Always leave this last one

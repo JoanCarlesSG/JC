@@ -14,6 +14,9 @@ import Vue from 'vue'
 import Quasar from 'quasar'
 import router from './router'
 
+import axios from 'axios'
+Vue.prototype.$http = axios
+
 Vue.config.productionTip = false
 Vue.use(Quasar) // Install Quasar Framework
 
@@ -24,6 +27,19 @@ import 'quasar-extras/material-icons'
 // import 'quasar-extras/ionicons'
 // import 'quasar-extras/fontawesome'
 // import 'quasar-extras/animate'
+
+var store = {
+  state: {
+    message: 'Hello!'
+  },
+  actionA: function () {
+    this.state.message = 'action A triggered'
+  },
+  actionB: function () {
+    this.state.message = 'action B triggered'
+  }
+}
+Vue.store = store
 
 Quasar.start(() => {
   /* eslint-disable no-new */
