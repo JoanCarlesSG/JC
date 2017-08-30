@@ -16,6 +16,7 @@
 </template>
 
 <script>
+import Vue from 'vue'
 import axios from 'axios'
 
 import {
@@ -31,21 +32,26 @@ export default {
   data () {
     return {
       username: '',
-      password: ''
+      password: '',
+      sharedState: Vue.store.state
     }
   },
   methods: {
     login () {
       console.log('LOGIN!')
-      var url = 'http://xenial.local/ajgirona/feines_proveidors/o/token'
-      var data = {
-        username: this.username,
-        password: this.password,
-        grant_type: 'password'
-      }
+      var url = 'http://xenial.local/ajgirona/feines_proveidors/o/token/'
+      const data = new FormData()
+      data.append('username', this.username)
+      data.append('password', this.password)
+      data.append('grant_type', 'password')
+      data.append('client_id', 'HrBnfIV54e82dwIeo2heqY4QvJTy0gX56yMpJ5wE')
+
+      var self = this
       axios.post(url, data)
         .then(function (response) {
           console.log(response.data)
+          self.sharedState.access_token = response.data.access_token
+          self.$router.go(-1)
         })
         .catch(function (error) {
           console.log(error)

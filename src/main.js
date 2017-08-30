@@ -30,6 +30,7 @@ import 'quasar-extras/material-icons'
 
 var store = {
   state: {
+    access_token: '',
     message: 'Hello!'
   },
   actionA: function () {
