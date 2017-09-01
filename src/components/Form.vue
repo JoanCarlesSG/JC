@@ -107,15 +107,32 @@ export default {
       location: '',
       terms: '',
       countries: parseCountries(),
-      contractOptions: [
-        {label: 'Lot1', value: 1},
-        {label: 'Lot2', value: 2}
-      ],
       locationOptions: parseCountries(),
       elementTypeOptions: [
         {label: 'Arbre', value: 1},
         {label: 'Parterre', value: 2}
-      ]
+      ],
+      sharedState: Vue.store.state
+    }
+  },
+  computed: {
+    contractOptions: function () {
+      var options = []
+      this.sharedState.contracts.forEach(function (element) {
+        // console.log(element)
+        options.push({label: element.name, value: element.id})
+      })
+      return options
+    }
+  },
+  created () {
+    console.log('Form created')
+  },
+  mounted () {
+    if (this.$route.path === '/form/add') {
+      if (this.contractOptions.length === 1) {
+        this.contract = this.contractOptions[0].value
+      }
     }
   },
   methods: {

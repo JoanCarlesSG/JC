@@ -22,9 +22,14 @@ export default new VueRouter({
    */
 
   routes: [
-    { path: '/', component: load('Index') },
+    {
+      path: '/',
+      component: load('Index'),
+      meta: {auth: true}
+    },
     { path: '/login', component: load('Login') },
     { path: '/form/:id', component: load('Form') },
+    { path: '/logout', component: load('Logout') },
 
     // Always leave this last one
     { path: '*', component: load('Error404') } // Not found

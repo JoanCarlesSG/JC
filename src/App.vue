@@ -52,7 +52,12 @@
         <router-view /> component
         if using subRoutes
       -->
-      <router-view />
+      <div class="loading" v-if="loading">
+        Loading...
+      </div>
+      <div v-if="!loading">
+        <router-view />
+      </div>
     </q-layout>
   </div>
 </template>
@@ -63,7 +68,6 @@
  */
 
 import Vue from 'vue'
-import axios from 'axios'
 
 import {
   QLayout,
@@ -93,33 +97,65 @@ export default {
   },
   data: function () {
     return {
-      startup: [],
+      loading: true,
+      startup: null,
       errors: [],
       sharedState: Vue.store.state
     }
   },
   created: function () {
-    // Fetches posts when the component is created.
-    axios.get('http://xenial.local/ajgirona/feines_proveidors/startup')
-      .then(response => {
-        // JSON responses are automatically parsed.
-        this.startup = response.data
-        console.log(this.startup)
-      })
-      .catch(e => {
-        this.errors.push(e)
-        console.log(this.errors)
+    try {
+      this.sharedState.access_token = localStorage.getItem('access_token')
+    }
+    catch (e) {
+      console.log(e)
+    }
+  },
+  watch: {
+    // call again the method if the route changes
+    '$route': 'routeChanged'
+  },
+  methods: {
+    routeChanged () {
+      console.log(this.$route.path)
+      if (this.$route.path === '/login') {
+        // nothing to do
+        return
+      }
+      console.log('Auth ok?')
+      console.log(this.sharedState.access_token)
+      if (this.sharedState.access_token == null) {
+        this.loading = false
         this.$router.push('/login')
-      })
+        console.log('Needs login')
+        return
+      }
 
-    // async / await version (created() becomes async created())
-    //
-    // try {
-    //   const response = await axios.get(`http://jsonplaceholder.typicode.com/posts`)
-    //   this.posts = response.data
-    // } catch (e) {
-    //   this.errors.push(e)
-    // }
+      console.log('Fetch data?')
+      if (this.startup == null) {
+        console.log('Fetching data...')
+
+        var config = {
+          headers: {'Authorization': 'Bearer '.concat(this.sharedState.access_token)}
+        }
+
+        // Fetches posts when the component is created.
+        this.axios.get('http://xenial.local/ajgirona/feines_proveidors/startup', config)
+          .then(response => {
+            // JSON responses are automatically parsed.
+            this.startup = response.data
+            this.sharedState.contracts = this.startup.contracts
+            console.log(this.startup)
+            this.loading = false
+          })
+          .catch(e => {
+            this.errors.push(e)
+            console.log(this.errors)
+            this.loading = false
+            this.$router.push('/login')
+          })
+      }
+    }
   }
 }
 </script>

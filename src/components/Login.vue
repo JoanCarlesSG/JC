@@ -17,7 +17,6 @@
 
 <script>
 import Vue from 'vue'
-import axios from 'axios'
 
 import {
   QInput,
@@ -47,11 +46,13 @@ export default {
       data.append('client_id', 'HrBnfIV54e82dwIeo2heqY4QvJTy0gX56yMpJ5wE')
 
       var self = this
-      axios.post(url, data)
+      this.axios.post(url, data)
         .then(function (response) {
           console.log(response.data)
           self.sharedState.access_token = response.data.access_token
-          self.$router.go(-1)
+          localStorage.setItem('access_token', response.data.access_token)
+          // self.$router.go(-1)
+          self.$router.push('/')
         })
         .catch(function (error) {
           console.log(error)
