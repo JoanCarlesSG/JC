@@ -29,7 +29,7 @@
 
         <q-list no-border link inset-delimiter>
           <q-list-header>manelclos@gmail.com</q-list-header>
-          <q-item to="/logout">
+          <q-item to="/logout" @click="logout()">
             <q-item-side icon="exit_to_app" />
             <q-item-main label="Tancar sessió" />
           </q-item>
@@ -116,12 +116,27 @@ export default {
     '$route': 'routeChanged'
   },
   methods: {
+    logout () {
+      console.log('woooop')
+      this.$refs.layout.hideCurrentSide()
+      this.$refs.layout.hideRight()
+      console.log(this.$refs.layout)
+    },
     routeChanged () {
       console.log(this.$route.path)
       if (this.$route.path === '/login') {
-        // nothing to do
+        // make sure dialog will appear
+        this.loading = false
         return
       }
+
+      if (this.$route.path === '/logout') {
+        console.log('CLOSE')
+        // make sure dialog will appear
+        this.loading = false
+        return
+      }
+
       console.log('Auth ok?')
       console.log(this.sharedState.access_token)
       if (this.sharedState.access_token == null) {
@@ -136,7 +151,8 @@ export default {
         console.log('Fetching data...')
 
         var config = {
-          headers: {'Authorization': 'Bearer '.concat(this.sharedState.access_token)}
+          headers: {'Authorization': 'Bearer '.concat(this.sharedState.access_token)},
+          timeout: 10000
         }
 
         // Fetches posts when the component is created.

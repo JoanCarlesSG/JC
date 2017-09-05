@@ -1,16 +1,32 @@
 <template>
   <div>
 
-    <q-input color="amber" v-model="username"
-             ref="username"
-             float-label="email"/>
+    <div class="loading" v-if="loading">
+      Loging in...
+    </div>
+    <div v-if="!loading">
+      <q-alert
+        v-for="error in errors"
+        :key="error"
+        type="negative"
+        ref="destroyableAlert"
+        enter="bounceInRight"
+        leave="bounceOutLeft"
+      >
+        {{ error }}
+      </q-alert>
 
-    <q-input color="amber" v-model="password"
-             ref="password"
-             float-label="password"/>
+      <q-input color="amber" v-model="username"
+               ref="username"
+               float-label="email"/>
+
+      <q-input color="amber" v-model="password"
+               ref="password"
+               float-label="password"/>
 
 
-    <q-btn color="grey" icon="login" label="Login" @click="login" />
+      <q-btn color="grey" icon="login" label="Login" @click="login" />
+    </div>
 
   </div>
 </template>
@@ -20,23 +36,29 @@ import Vue from 'vue'
 
 import {
   QInput,
-  QBtn
+  QBtn,
+  QAlert
 } from 'quasar'
 
 export default {
   components: {
     QInput,
-    QBtn
+    QBtn,
+    QAlert
   },
   data () {
     return {
       username: '',
       password: '',
-      sharedState: Vue.store.state
+      sharedState: Vue.store.state,
+      loading: false,
+      errors: []
     }
   },
   methods: {
     login () {
+      this.loading = true
+      this.errors = []
       console.log('LOGIN!')
       var url = 'http://xenial.local/ajgirona/feines_proveidors/o/token/'
       const data = new FormData()
@@ -46,7 +68,7 @@ export default {
       data.append('client_id', 'HrBnfIV54e82dwIeo2heqY4QvJTy0gX56yMpJ5wE')
 
       var self = this
-      this.axios.post(url, data)
+      this.axios.post(url, data, { timeout: 5000 })
         .then(function (response) {
           console.log(response.data)
           self.sharedState.access_token = response.data.access_token
@@ -56,6 +78,16 @@ export default {
         })
         .catch(function (error) {
           console.log(error)
+          self.loading = false
+
+          // If there was a problem, we need to
+          // dispatch the error condition
+          if (error.response.status >= 400 && error.response.status <= 600) {
+            self.errors.push('Login error, please try again')
+          }
+          else {
+            self.errors.push('Please check your network connection and try again.')
+          }
         })
     }
   }
