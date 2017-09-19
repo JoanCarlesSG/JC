@@ -11,6 +11,10 @@ require(`quasar/dist/quasar.${__THEME}.css`)
 // require(`quasar/dist/quasar.ie.${__THEME}.css`)
 
 import Vue from 'vue'
+
+// Vue.API_ROOT = 'http://xenial.local'
+Vue.API_ROOT = 'https://server3.microdisseny.com'
+
 import Quasar from 'quasar'
 import router from './router'
 Vue.router = router

@@ -6,7 +6,7 @@
       view="lHh Lpr fff"
       :left-class="{'bg-grey-2': true}"
     >
-      <q-toolbar slot="header" class="glossy">
+      <q-toolbar slot="header" class="">
         <q-toolbar-title>
           Feines proveïdors
           <div slot="subtitle">Ajuntament de Girona</div>
@@ -29,7 +29,7 @@
 
         <q-list no-border link inset-delimiter>
           <q-list-header>manelclos@gmail.com</q-list-header>
-          <q-item to="/logout" @click="logout()">
+          <q-item @click="logout">
             <q-item-side icon="exit_to_app" />
             <q-item-main label="Tancar sessió" />
           </q-item>
@@ -97,7 +97,7 @@ export default {
   },
   data: function () {
     return {
-      loading: true,
+      loading: false,
       startup: null,
       errors: [],
       sharedState: Vue.store.state
@@ -119,11 +119,17 @@ export default {
     logout () {
       console.log('woooop')
       this.$refs.layout.hideCurrentSide()
-      this.$refs.layout.hideRight()
-      console.log(this.$refs.layout)
+      // this.$refs.layout.hideRight()
+      this.$router.push('/logout')
     },
     routeChanged () {
+      this.$refs.layout.hideRight()
       console.log(this.$route.path)
+
+      // if (this.$route.path === '/') {
+      //   debugger
+      // }
+
       if (this.$route.path === '/login') {
         // make sure dialog will appear
         this.loading = false
@@ -156,15 +162,20 @@ export default {
         }
 
         // Fetches posts when the component is created.
-        this.axios.get('http://xenial.local/ajgirona/feines_proveidors/startup', config)
+        this.axios.get(Vue.API_ROOT + '/ajgirona/feines_proveidors/startup', config)
           .then(response => {
+            console.log('startup response ok')
             // JSON responses are automatically parsed.
             this.startup = response.data
             this.sharedState.contracts = this.startup.contracts
+            this.sharedState.elementTypes = this.startup.element_types
+            this.sharedState.elementGroups = this.startup.element_groups
+            this.sharedState.elementTasks = this.startup.element_tasks
             console.log(this.startup)
             this.loading = false
           })
           .catch(e => {
+            console.log('startup response ERROR')
             this.errors.push(e)
             console.log(this.errors)
             this.loading = false

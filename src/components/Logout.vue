@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <div class="layout-padding">
     <p>Are you sure you want to log out?</p>
-    <q-btn color="grey" icon="login" label="Logout" @click="logout" />
+    <q-btn @click="logout">Log out</q-btn>
 
   </div>
 </template>
@@ -25,7 +25,8 @@ export default {
   methods: {
     logout () {
       console.log('LOGOUT!')
-      var url = 'http://xenial.local/ajgirona/feines_proveidors/o/revoke_token/'
+
+      var url = Vue.API_ROOT + '/ajgirona/feines_proveidors/o/revoke_token/'
       const data = new FormData()
       data.append('token', this.sharedState.access_token)
       data.append('client_id', 'HrBnfIV54e82dwIeo2heqY4QvJTy0gX56yMpJ5wE')
@@ -36,10 +37,11 @@ export default {
       this.axios.post(url, data)
         .then(function (response) {
           console.log(response.data)
-          self.$router.push('/')
+          self.$router.push('/login')
         })
         .catch(function (error) {
           console.log(error)
+          self.$router.push('/login')
         })
     }
   }

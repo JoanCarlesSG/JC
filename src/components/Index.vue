@@ -5,6 +5,8 @@
       if using subRoutes
     -->
     <div class="layout-view">
+      <div>Sincronitzant dades (foto 1 de 3)</div>
+      
       <q-fixed-position corner="bottom-right" :offset="[18, 18]">
         <q-btn round color="primary" @click="add_job" icon="add" />
       </q-fixed-position>
@@ -14,7 +16,7 @@
         <q-item to="/form/45">
             <q-item-side left icon="create" />
             <q-item-main>
-              <q-item-tile label>Done</q-item-tile>
+              <q-item-tile label>Oberta</q-item-tile>
               <q-item-tile sublabel>Open</q-item-tile>
             </q-item-main>
             <q-item-side right icon="keyboard_arrow_right" />

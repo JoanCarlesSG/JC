@@ -1,7 +1,10 @@
 <template>
-  <div class="layout-padding">
-    <div>Hello there!</div>
+<q-tabs no-pane-border>
+  <q-tab default slot="title" name="tab-fitxa" label="Fitxa" icon="assignment" />
+  <q-tab slot="title" name="tab-fotos" label="Fotos" icon="photo" />
 
+  <q-tab-pane name="tab-fitxa" style="padding-top: 0">
+  <div>
     <q-select
       v-model="contract"
       v-show="showContract"
@@ -23,7 +26,7 @@
       ref="sectorSelect"
       v-model="location"
       float-label="Sector"
-      :options="locationOptions"
+      :options="elementGroupsOptions"
       style="flex-grow: 1;"
       @created="searchSector"
     />
@@ -50,8 +53,41 @@
     <q-btn color="grey" icon="close" @click="searchSectorClose" />
 </div>
 
+    <q-select
+      ref="tascaSelect"
+      v-model="task"
+      float-label="Task"
+      :options="taskOptions"
+    />
 
+    <q-input
+      v-model="note"
+      type="textarea"
+      float-label="Observacions"
+      :max-height="100"
+      :min-rows="1"
+    />
+
+    <div style="margin-top: 50px; text-align: center">
+      <q-btn icon="photo">New photo</q-btn>
+    </div>
+    
+    Photo:
+    <input type="file" />
   </div>
+  </q-tab-pane>
+
+  <q-tab-pane name="tab-fotos">
+    <div style="display: flex; flex-flow: row wrap">
+      <div v-for="item in gallery" style="width: 60%; flex: auto; margin: 0 0 12px 0">
+        <img @click="photoclick" :src="item" style="height: auto; width: 100%">
+        <div style="text-align: right"><span>Foto abans</span><q-btn icon="delete"></q-btn></div>
+      </div>
+    </div>
+
+  </q-tab-pane>
+
+</q-tabs>
 </template>
 
 <script>
@@ -76,7 +112,11 @@ import {
   QInput,
   filter,
   QSelect,
-  QBtn
+  QBtn,
+  QTabs,
+  QTab,
+  QTabPane,
+  QGallery
 } from 'quasar'
 
 function parseCountries () {
@@ -96,7 +136,11 @@ export default {
     QSearch,
     QInput,
     QSelect,
-    QBtn
+    QBtn,
+    QTabs,
+    QTab,
+    QTabPane,
+    QGallery
   },
   data () {
     return {
@@ -105,13 +149,19 @@ export default {
       contract: '',
       elementType: '',
       location: '',
+      task: '',
+      note: '',
+      gallery: [
+        Vue.API_ROOT + '/ajgirona/feines_proveidors/static/photos/mountains.jpg',
+        Vue.API_ROOT + '/ajgirona/feines_proveidors/static/photos/parallax1.jpg',
+        Vue.API_ROOT + '/ajgirona/feines_proveidors/static/photos/parallax2.jpg',
+        Vue.API_ROOT + '/ajgirona/feines_proveidors/static/photos/parallax1.jpg',
+        Vue.API_ROOT + '/ajgirona/feines_proveidors/static/photos/mountains.jpg',
+        Vue.API_ROOT + '/ajgirona/feines_proveidors/static/photos/parallax2.jpg'
+      ],
       terms: '',
       countries: parseCountries(),
       locationOptions: parseCountries(),
-      elementTypeOptions: [
-        {label: 'Arbre', value: 1},
-        {label: 'Parterre', value: 2}
-      ],
       sharedState: Vue.store.state
     }
   },
@@ -121,6 +171,40 @@ export default {
       this.sharedState.contracts.forEach(function (element) {
         // console.log(element)
         options.push({label: element.name, value: element.id})
+      })
+      return options
+    },
+    elementTypeOptions: function () {
+      var options = []
+      this.sharedState.elementTypes.forEach(function (element) {
+        // console.log(element)
+        options.push({label: element.name, value: element.id})
+      })
+      return options
+    },
+    elementGroupsOptions: function () {
+      var options = []
+      var self = this
+      if (!this.elementType) {
+        return options
+      }
+      this.sharedState.elementGroups.forEach(function (element) {
+        if (element.types.includes(self.elementType)) {
+          options.push({label: element.name, value: element.id})
+        }
+      })
+      return options
+    },
+    taskOptions: function () {
+      var options = []
+      var self = this
+      if (!this.elementType) {
+        return options
+      }
+      this.sharedState.elementTasks.forEach(function (element) {
+        if (element.types.includes(self.elementType)) {
+          options.push({label: element.name, value: element.id})
+        }
       })
       return options
     }
@@ -137,7 +221,8 @@ export default {
   },
   methods: {
     search (terms, done) {
-      // _.debounce(function () {
+      console.log(this.countries)
+      // FIXME: _.debounce(function () {
       setTimeout(() => {
         console.log('Filter items...')
         done(filter(terms, {field: 'value', list: this.countries}))
@@ -157,6 +242,10 @@ export default {
     },
     searchSectorClose () {
       this.showLocationOptions = true
+    },
+    photoclick (event) {
+      console.log('photo click')
+      console.log(event.target.src)
     }
   }
 }

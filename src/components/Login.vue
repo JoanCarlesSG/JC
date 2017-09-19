@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="layout-padding" style="padding: 100px 50px">
 
     <div class="loading" v-if="loading">
       Loging in...
@@ -16,16 +16,21 @@
         {{ error }}
       </q-alert>
 
-      <q-input color="amber" v-model="username"
+      <q-input v-model="username"
                ref="username"
-               float-label="email"/>
+               float-label="email"
+               type="email"
+               @enter="login"
+               />
 
-      <q-input color="amber" v-model="password"
+      <q-input v-model="password"
                ref="password"
-               float-label="password"/>
+               float-label="password"
+               type="password"
+               @enter="login"
+               />
 
-
-      <q-btn color="grey" icon="login" label="Login" @click="login" />
+      <q-btn @click="login">Log in</q-btn>
     </div>
 
   </div>
@@ -60,7 +65,7 @@ export default {
       this.loading = true
       this.errors = []
       console.log('LOGIN!')
-      var url = 'http://xenial.local/ajgirona/feines_proveidors/o/token/'
+      var url = Vue.API_ROOT + '/ajgirona/feines_proveidors/o/token/'
       const data = new FormData()
       data.append('username', this.username)
       data.append('password', this.password)
@@ -74,6 +79,8 @@ export default {
           self.sharedState.access_token = response.data.access_token
           localStorage.setItem('access_token', response.data.access_token)
           // self.$router.go(-1)
+          self.loading = false
+          console.log('push("/"')
           self.$router.push('/')
         })
         .catch(function (error) {
