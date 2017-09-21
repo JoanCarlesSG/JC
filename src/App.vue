@@ -187,4 +187,46 @@ export default {
 }
 </script>
 
-<style></style>
+<style>
+.q-toolbar { background: #0d65a3; }
+.q-toolbar-title { 
+  background: url(https://server3.microdisseny.com/ajgirona/feines_proveidors/static/feines_proveidors/logo_ajgirona-white.svg) no-repeat left 10px;
+  background-size: 36px 36px;
+  padding: 10px 45px 10px
+}
+
+.q-btn.q-btn-standard {
+  background: #3b8ac3;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  color: #fff; 
+  min-width: 40px
+}
+
+/*.layout-view > div:first-child  {*/
+div.data-sync {
+    padding: 10px 15px;
+    font-size: .8em;
+    background: #e0edf6;
+}
+
+.q-item:nth-child(2n) {
+    background-color: #e0edf6!important;
+}
+.q-item:nth-child(2n):hover {
+    background-color: #ddd!important;
+}
+
+.bg-primary {
+    background: #0d65a3 !important;
+}
+
+.q-tabs-head {
+    background: #3b8ac3;
+}
+
+.q-tab-pane div >span {
+  margin-right: 20px;
+}
+</style>

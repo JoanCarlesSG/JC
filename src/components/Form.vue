@@ -77,14 +77,25 @@
   </div>
   </q-tab-pane>
 
-  <q-tab-pane name="tab-fotos">
-    <div style="display: flex; flex-flow: row wrap">
-      <div v-for="item in gallery" style="width: 60%; flex: auto; margin: 0 0 12px 0">
-        <img @click="photoclick" :src="item" style="height: auto; width: 100%">
-        <div style="text-align: right"><span>Foto abans</span><q-btn icon="delete"></q-btn></div>
-      </div>
+  <q-tab-pane name="tab-fotos" style="padding: 0px">
+    <div style="display: flex; justify-content: space-between; margin: 12px 10px 5px 9px;">
+      <q-btn icon="photo" style="">Foto abans</q-btn>
+      <q-btn icon="photo" sytle="margin-left: auto;">Foto després</q-btn>
     </div>
-
+    
+    <q-card inline v-for="item in gallery">
+      <q-card-media>
+        <img @click="photoclick" :src="item" style="height: auto; width: 100%">
+      </q-card-media>
+      <q-card-title>
+        <div style="font-size: 16px; line-height: 18px">Foto abans</div>
+        <div style="font-size: 12px; line-height: 14px">Taken on 09/09/2017</div>
+        <div slot="right">
+          <q-btn flat small @click="photoclick" ><q-icon name="edit" /></q-btn>
+          <q-btn flat small @click="photoclick" ><q-icon name="delete" /></q-btn>
+        </div>
+      </q-card-title>
+    </q-card>
   </q-tab-pane>
 
 </q-tabs>
@@ -116,7 +127,12 @@ import {
   QTabs,
   QTab,
   QTabPane,
-  QGallery
+  QCard,
+  QCardMedia,
+  QCardTitle,
+  QCardSeparator,
+  QCardMain,
+  QIcon
 } from 'quasar'
 
 function parseCountries () {
@@ -140,7 +156,12 @@ export default {
     QTabs,
     QTab,
     QTabPane,
-    QGallery
+    QCard,
+    QCardMedia,
+    QCardTitle,
+    QCardSeparator,
+    QCardMain,
+    QIcon
   },
   data () {
     return {
