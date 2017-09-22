@@ -1,4 +1,16 @@
 <template>
+  <div>
+
+  <image-input-resizer
+    ref="imageinputresizer" 
+    @ready="imageReady"
+    />
+
+  <div class="loading" v-if="loading">
+    Loging in...
+  </div>
+
+  <div v-if="!loading">
 <q-tabs no-pane-border>
   <q-tab default slot="title" name="tab-fitxa" label="Fitxa" icon="assignment" />
   <q-tab slot="title" name="tab-fotos" label="Fotos" icon="photo" />
@@ -31,7 +43,8 @@
       @created="searchSector"
     />
 
-    <q-btn color="grey" icon="search" @click="searchSector" />
+    <q-btn color="grey" icon="search" @click="searchSector" style="display:none" />
+    <q-btn flat small @click="searchSector" ><q-icon name="search" /></q-btn>
 </div>
 
 <!-- search box for sector -->
@@ -50,7 +63,8 @@
       />
     </q-input>
 
-    <q-btn color="grey" icon="close" @click="searchSectorClose" />
+    <q-btn color="grey" icon="close" @click="searchSectorClose" style="display: none"/>
+    <q-btn flat small @click="searchSectorClose" ><q-icon name="close" /></q-btn>
 </div>
 
     <q-select
@@ -68,24 +82,22 @@
       :min-rows="1"
     />
 
-    <div style="margin-top: 50px; text-align: center">
-      <q-btn icon="photo">New photo</q-btn>
+    <div style="display: flex; justify-content: space-between; margin: 40px 0px 5px 0px;">
+      <q-btn icon="photo" @click="newPhoto(true)" style="">Foto abans</q-btn>
+      <q-btn icon="photo" @click="newPhoto(false)" sytle="margin-left: auto;">Foto després</q-btn>
     </div>
-    
-    Photo:
-    <input type="file" />
   </div>
   </q-tab-pane>
 
   <q-tab-pane name="tab-fotos" style="padding: 0px">
     <div style="display: flex; justify-content: space-between; margin: 12px 10px 5px 9px;">
-      <q-btn icon="photo" style="">Foto abans</q-btn>
-      <q-btn icon="photo" sytle="margin-left: auto;">Foto després</q-btn>
+      <q-btn icon="photo" @click="newPhoto(true)" style="">Foto abans</q-btn>
+      <q-btn icon="photo" @click="newPhoto(false)" sytle="margin-left: auto;">Foto després</q-btn>
     </div>
     
     <q-card inline v-for="item in gallery">
       <q-card-media>
-        <img @click="photoclick" :src="item" style="height: auto; width: 100%">
+        <img @click="photoclick" :src="item.src" style="height: auto; width: 100%">
       </q-card-media>
       <q-card-title>
         <div style="font-size: 16px; line-height: 18px">Foto abans</div>
@@ -96,9 +108,17 @@
         </div>
       </q-card-title>
     </q-card>
+
+    <div v-if="gallery.length > 0" style="display: flex; justify-content: space-between; margin: 12px 10px 50px 9px;">
+      <q-btn icon="photo" @click="newPhoto(true)" style="">Foto abans</q-btn>
+      <q-btn icon="photo" @click="newPhoto(false)" sytle="margin-left: auto;">Foto després</q-btn>
+    </div>
+
   </q-tab-pane>
 
 </q-tabs>
+  </div>
+</div>
 </template>
 
 <script>
@@ -135,6 +155,8 @@ import {
   QIcon
 } from 'quasar'
 
+import ImageInputResizer from './ImageInputResizer.vue'
+
 function parseCountries () {
   console.log('parseCountries')
   return countries.map(country => {
@@ -161,10 +183,12 @@ export default {
     QCardTitle,
     QCardSeparator,
     QCardMain,
-    QIcon
+    QIcon,
+    ImageInputResizer
   },
   data () {
     return {
+      loading: false,
       showContract: true,
       showLocationOptions: true,
       contract: '',
@@ -173,12 +197,12 @@ export default {
       task: '',
       note: '',
       gallery: [
-        Vue.API_ROOT + '/ajgirona/feines_proveidors/static/photos/mountains.jpg',
-        Vue.API_ROOT + '/ajgirona/feines_proveidors/static/photos/parallax1.jpg',
-        Vue.API_ROOT + '/ajgirona/feines_proveidors/static/photos/parallax2.jpg',
-        Vue.API_ROOT + '/ajgirona/feines_proveidors/static/photos/parallax1.jpg',
-        Vue.API_ROOT + '/ajgirona/feines_proveidors/static/photos/mountains.jpg',
-        Vue.API_ROOT + '/ajgirona/feines_proveidors/static/photos/parallax2.jpg'
+        // Vue.API_ROOT + '/ajgirona/feines_proveidors/static/photos/mountains.jpg',
+        // Vue.API_ROOT + '/ajgirona/feines_proveidors/static/photos/parallax1.jpg',
+        // Vue.API_ROOT + '/ajgirona/feines_proveidors/static/photos/parallax2.jpg',
+        // Vue.API_ROOT + '/ajgirona/feines_proveidors/static/photos/parallax1.jpg',
+        // Vue.API_ROOT + '/ajgirona/feines_proveidors/static/photos/mountains.jpg',
+        // Vue.API_ROOT + '/ajgirona/feines_proveidors/static/photos/parallax2.jpg'
       ],
       terms: '',
       countries: parseCountries(),
@@ -242,11 +266,11 @@ export default {
   },
   methods: {
     search (terms, done) {
-      console.log(this.countries)
+      console.log(this.elementGroupsOptions)
       // FIXME: _.debounce(function () {
       setTimeout(() => {
         console.log('Filter items...')
-        done(filter(terms, {field: 'value', list: this.countries}))
+        done(filter(terms, {field: 'label', list: this.elementGroupsOptions}))
       }, 250)
     },
     selectedSector (item) {
@@ -267,6 +291,14 @@ export default {
     photoclick (event) {
       console.log('photo click')
       console.log(event.target.src)
+    },
+    newPhoto (abans) {
+      this.$refs.imageinputresizer.newImage()
+    },
+    imageReady (uri) {
+      this.gallery.push({
+        src: uri
+      })
     }
   }
 }
