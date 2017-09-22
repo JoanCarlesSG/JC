@@ -12,8 +12,8 @@
 
   <div v-if="!loading">
 <q-tabs no-pane-border>
-  <q-tab default slot="title" name="tab-fitxa" label="Fitxa" icon="assignment" />
-  <q-tab slot="title" name="tab-fotos" label="Fotos" icon="photo" />
+  <q-tab default slot="title" name="tab-fitxa" icon="assignment" />
+  <q-tab slot="title" name="tab-fotos" icon="photo" />
 
   <q-tab-pane name="tab-fitxa" style="padding-top: 0">
   <div>
@@ -82,7 +82,7 @@
       :min-rows="1"
     />
 
-    <div style="display: flex; justify-content: space-between; margin: 40px 0px 5px 0px;">
+    <div style="display: none; justify-content: space-between; margin: 40px 0px 5px 0px;">
       <q-btn icon="photo" @click="newPhoto(true)" style="">Foto abans</q-btn>
       <q-btn icon="photo" @click="newPhoto(false)" sytle="margin-left: auto;">Foto després</q-btn>
     </div>
@@ -95,7 +95,7 @@
       <q-btn icon="photo" @click="newPhoto(false)" sytle="margin-left: auto;">Foto després</q-btn>
     </div>
     
-    <q-card inline v-for="item in gallery">
+    <q-card inline v-for="item in gallery" :id="'photo_' + item.id">
       <q-card-media>
         <img @click="photoclick" :src="item.src" style="height: auto; width: 100%">
       </q-card-media>
@@ -290,15 +290,44 @@ export default {
     },
     photoclick (event) {
       console.log('photo click')
-      console.log(event.target.src)
+      window.moment = this.$moment
     },
     newPhoto (abans) {
       this.$refs.imageinputresizer.newImage()
     },
     imageReady (uri) {
+      let now = this.$moment()
       this.gallery.push({
-        src: uri
+        src: uri,
+        timestamp: now.format(this.$moment().ISO_8601),
+        id: now.valueOf()
       })
+
+      let self = this
+      Vue.nextTick(function () {
+        self.scrollToPhoto('photo_' + now.valueOf())
+      })
+    },
+    scrollToPhoto (id) {
+      console.log('scroll start')
+      var options = {
+        // container: '#' + id,
+        // easing: 'ease-in',
+        offset: -73,
+        cancelable: true,
+        onDone: function () {
+          // scrolling is done
+        },
+        onCancel: function () {
+          // scrolling has been interrupted
+        },
+        x: false,
+        y: true
+      }
+
+      // or alternatively inside your components you can use
+      this.$scrollTo('#' + id, 500, options)
+      console.log('scroll end')
     }
   }
 }

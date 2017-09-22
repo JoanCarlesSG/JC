@@ -61,7 +61,9 @@
         Loading...
       </div>
       <div v-if="!loading">
-        <router-view />
+          <keep-alive>
+            <router-view class="layout-view"></router-view>
+          </keep-alive>
       </div>
     </q-layout>
   </div>
@@ -84,7 +86,10 @@ import {
   QListHeader,
   QItem,
   QItemSide,
-  QItemMain
+  QItemMain,
+  QTransition,
+  QSlideTransition
+
 } from 'quasar'
 
 export default {
@@ -98,7 +103,9 @@ export default {
     QListHeader,
     QItem,
     QItemSide,
-    QItemMain
+    QItemMain,
+    QTransition,
+    QSlideTransition
   },
   data: function () {
     return {

@@ -15,6 +15,13 @@ import Vue from 'vue'
 // Vue.API_ROOT = 'http://xenial.local'
 Vue.API_ROOT = 'https://server3.microdisseny.com'
 
+import moment from 'moment'
+import VueMomentJS from 'vue-momentjs'
+Vue.use(VueMomentJS, moment)
+
+var VueScrollTo = require('vue-scrollto')
+Vue.use(VueScrollTo)
+
 import Quasar from 'quasar'
 import router from './router'
 Vue.router = router
