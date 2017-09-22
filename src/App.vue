@@ -42,6 +42,11 @@
             <q-item-main label="Ajuda" />
           </q-item>
         </q-list>
+        
+        <p style="text-align: center; margin-top: 30px; font-size: 0.8em" class="text-grey-7">
+          Versió 0.2.0
+        </p>
+
         <p style="text-align: center; margin-top: 30px; font-size: 0.8em" class="text-grey-7">
           Powered by <a target="_blank" href="http://www.microdisseny.com">Microdisseny</a>
         </p>
