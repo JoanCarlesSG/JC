@@ -37,11 +37,11 @@ export default {
       this.axios.post(url, data)
         .then(function (response) {
           console.log(response.data)
-          self.$router.push('/login')
+          self.$router.replace('/login')
         })
         .catch(function (error) {
           console.log(error)
-          self.$router.push('/login')
+          self.$router.replace('/login')
         })
     }
   }

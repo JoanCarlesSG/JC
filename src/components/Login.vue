@@ -91,7 +91,7 @@ export default {
           // self.$router.go(-1)
           self.loading = false
           console.log('push("/"')
-          self.$router.push('/')
+          self.$router.replace('/')
         })
         .catch(function (error) {
           console.log(error)
