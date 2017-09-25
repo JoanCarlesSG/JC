@@ -91,8 +91,8 @@
 
   <q-tab-pane name="tab-fotos" style="padding: 0px">
     <div style="display: flex; justify-content: space-between; margin: 12px 10px 5px 9px;">
-      <q-btn icon="photo" @click="newPhoto(true)" style="">Foto abans</q-btn>
-      <q-btn icon="photo" @click="newPhoto(false)" sytle="margin-left: auto;">Foto després</q-btn>
+      <q-btn color="micro" icon="photo" @click="newPhoto(true)" style="">Foto abans</q-btn>
+      <q-btn color="micro" icon="photo" @click="newPhoto(false)" sytle="margin-left: auto;">Foto després</q-btn>
     </div>
     
     <q-card inline v-for="item in gallery" :id="'photo_' + item.id">
@@ -110,8 +110,8 @@
     </q-card>
 
     <div v-if="gallery.length > 0" style="display: flex; justify-content: space-between; margin: 12px 10px 50px 9px;">
-      <q-btn icon="photo" @click="newPhoto(true)" style="">Foto abans</q-btn>
-      <q-btn icon="photo" @click="newPhoto(false)" sytle="margin-left: auto;">Foto després</q-btn>
+      <q-btn color="micro" icon="photo" @click="newPhoto(true)" style="">Foto abans</q-btn>
+      <q-btn color="micro" icon="photo" @click="newPhoto(false)" sytle="margin-left: auto;">Foto després</q-btn>
     </div>
 
   </q-tab-pane>

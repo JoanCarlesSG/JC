@@ -33,6 +33,7 @@
             <q-item-side icon="exit_to_app" />
             <q-item-main label="Tancar sessió" />
           </q-item>
+          <!--
           <q-item to="/report">
             <q-item-side icon="bug_report" />
             <q-item-main label="Comunicar incidència" />
@@ -41,6 +42,7 @@
             <q-item-side icon="help" />
             <q-item-main label="Ajuda" />
           </q-item>
+          -->
         </q-list>
         
         <p style="text-align: center; margin-top: 30px; font-size: 0.8em" class="text-grey-7">
@@ -57,14 +59,20 @@
         <router-view /> component
         if using subRoutes
       -->
-      <div class="loading" v-if="loading">
-        Loading...
-      </div>
-      <div v-if="!loading">
-          <keep-alive>
-            <router-view class="layout-view"></router-view>
-          </keep-alive>
-      </div>
+      <q-transition
+        enter="fadeIn"
+        leave="fadeOut"
+      >
+        <div class="loading" v-if="loading">
+          <div><q-icon name="sync" class="animate-spin-reverse" /></div>
+          <div>Un moment si us plau</div>
+        </div>
+      </q-transition>
+
+      <keep-alive>
+        <router-view v-if="!loading" class="layout-view"></router-view>
+      </keep-alive>
+
     </q-layout>
   </div>
 </template>
@@ -167,6 +175,7 @@ export default {
       console.log('Fetch data?')
       if (this.startup == null) {
         console.log('Fetching data...')
+        this.loading = true
 
         var config = {
           headers: {'Authorization': 'Bearer '.concat(this.sharedState.access_token)},
@@ -207,13 +216,16 @@ export default {
   padding: 10px 45px 10px
 }
 
-.q-btn.q-btn-standard {
-  background: #3b8ac3;
+.q-btn.q-btn-rectangle {
   padding: 10px 15px;
   border: none;
   border-radius: 4px;
-  color: #fff; 
   min-width: 40px
+}
+
+.q-btn.q-btn-rectangle.bg-micro {
+  color: #fff; 
+  background: #3b8ac3;
 }
 
 /*.layout-view > div:first-child  {*/
@@ -241,4 +253,25 @@ div.data-sync {
 .q-tab-pane div >span {
   margin-right: 20px;
 }
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+	color: #fff;
+  width:100%;
+	height:100%;
+  background: rgba(13, 101, 163, 0.9);
+  position: absolute; 
+  z-index: 1000;
+  text-align: center;
+}
+
+.loading i {
+  font-size: 4em;
+	vertical-align: middle;
+  margin: 0px 0 10px 0;
+}
+
 </style>

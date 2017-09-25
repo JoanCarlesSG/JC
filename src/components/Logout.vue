@@ -1,7 +1,7 @@
 <template>
   <div class="layout-padding">
     <p>Are you sure you want to log out?</p>
-    <q-btn @click="logout">Log out</q-btn>
+    <q-btn color="micro" @click="logout">Log out</q-btn>
 
   </div>
 </template>

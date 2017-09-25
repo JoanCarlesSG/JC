@@ -1,10 +1,16 @@
 <template>
-  <div class="layout-padding" style="padding: 100px 50px">
+  <div>
+    <q-transition
+      enter="fadeIn"
+      leave="fadeOut"
+    >
+      <div class="loading" v-if="loading">
+        <div><q-icon name="sync" class="animate-spin-reverse" /></div>
+        <div>Un moment si us plau</div>
+      </div>
+    </q-transition>
 
-    <div class="loading" v-if="loading">
-      Loging in...
-    </div>
-    <div v-if="!loading">
+    <div v-if="!loading" class="layout-padding login-form">
       <q-alert
         v-for="error in errors"
         :key="error"
@@ -30,7 +36,7 @@
                @enter="login"
                />
 
-      <q-btn @click="login">Log in</q-btn>
+      <q-btn color="micro" @click="login">Log in</q-btn>
     </div>
 
   </div>
@@ -42,14 +48,18 @@ import Vue from 'vue'
 import {
   QInput,
   QBtn,
-  QAlert
+  QAlert,
+  QIcon,
+  QTransition
 } from 'quasar'
 
 export default {
   components: {
     QInput,
     QBtn,
-    QAlert
+    QAlert,
+    QIcon,
+    QTransition
   },
   data () {
     return {
@@ -102,4 +112,7 @@ export default {
 </script>
 
 <style>
+.login-form {
+  padding: 60px 50px
+}
 </style>
