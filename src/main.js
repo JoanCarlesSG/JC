@@ -43,11 +43,14 @@ import 'quasar-extras/material-icons'
 import 'quasar-extras/animate/fadeIn.css'
 import 'quasar-extras/animate/fadeOut.css'
 
+import Lawnchair from 'lawnchair'
+
 var store = {
   state: {
     access_token: '',
     message: 'Hello!'
   },
+  localStore: new Lawnchair(),
   actionA: function () {
     this.state.message = 'action A triggered'
   },
@@ -56,6 +59,7 @@ var store = {
   }
 }
 Vue.store = store
+window.store = store
 
 Quasar.start(() => {
   /* eslint-disable no-new */

@@ -143,6 +143,7 @@ export default {
       this.$router.push('/logout')
     },
     routeChanged () {
+      let self = this
       this.$refs.layout.hideRight()
       console.log(this.$route.path)
 
@@ -187,12 +188,12 @@ export default {
           .then(response => {
             console.log('startup response ok')
             // JSON responses are automatically parsed.
-            this.startup = response.data
-            this.sharedState.contracts = this.startup.contracts
-            this.sharedState.elementTypes = this.startup.element_types
-            this.sharedState.elementGroups = this.startup.element_groups
-            this.sharedState.elementTasks = this.startup.element_tasks
+            self.loadStartupData(response.data)
+
             console.log(this.startup)
+            // Save startup cache
+            Vue.store.localStore.save({key: 'startup', data: this.startup})
+            console.log('startup cache saved')
             this.loading = false
           })
           .catch(e => {
@@ -200,8 +201,39 @@ export default {
             this.errors.push(e)
             console.log(this.errors)
             this.loading = false
-            this.$router.push('/login')
+            Vue.store.localStore.get('startup', function (me) {
+              console.log('startup cache')
+              self.loadStartupData(me.data)
+              this.loading = false
+            })
+
+            // this.$router.push('/login')
           })
+      }
+    },
+    loadStartupData (startup, newJobs) {
+      this.startup = startup
+      this.sharedState.contracts = startup.contracts
+      this.sharedState.elementTypes = startup.element_types
+      this.sharedState.elementGroups = startup.element_groups
+      this.sharedState.elementTasks = startup.element_tasks
+      console.log('Startup data loaded')
+
+      let self = this
+      Vue.store.localStore.get('jobs', function (jobs) {
+        console.log('saved jobs')
+        console.log(jobs)
+        if (jobs) {
+          self.sharedState.jobs = jobs.data
+        }
+        else {
+          self.sharedState.jobs = {}
+        }
+      })
+
+      if (newJobs) {
+        console.log('Jobs: ' + newJobs)
+        // update saved list of jobs
       }
     }
   }

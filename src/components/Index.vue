@@ -7,11 +7,11 @@
     <div class="layout-view">
       <div class="data-sync">Sincronitzant dades (foto 1 de 3)</div>
       
-      <q-fixed-position corner="bottom-right" :offset="[18, 18]">
-        <q-btn round color="primary" @click="add_job" icon="add" />
+      <q-fixed-position corner="bottom-right" :offset="[18, 18]" style="z-index: 500">
+        <q-btn round color="primary" @click="add_job" icon="add"/>
       </q-fixed-position>
       
-      <q-list no-border striped>
+      <!-- <q-list no-border striped>
         <q-list-header>Feines</q-list-header>
         <q-item to="/form/45">
             <q-item-side left icon="create" />
@@ -43,12 +43,26 @@
           </router-link>
         </q-item>
 
+      </q-list> -->
+
+      <q-list no-border striped>
+        <q-list-header>Feines</q-list-header>
+        <q-item v-for="item in jobs" :to="'/form/' + item.id">
+            <q-item-side left icon="create" />
+            <q-item-main>
+              <q-item-tile label>{{ getItemLabel(item) }}</q-item-tile>
+              <q-item-tile sublabel>{{ getItemSublabel(item) }}</q-item-tile>
+            </q-item-main>
+            <q-item-side right icon="keyboard_arrow_right" />
+          </router-link>
+        </q-item>
       </q-list>
 
     </div>
 </template>
 
 <script>
+import Vue from 'vue'
 
 import {
   QLayout,
@@ -83,13 +97,80 @@ export default {
   },
   data () {
     return {
+      jobs: {},
+      sharedState: Vue.store.state
     }
   },
   computed: {
   },
+  beforeRouteEnter (to, from, next) {
+    next(vm => {
+      console.log('BEFORE:')
+      console.log(vm.jobs)
+      vm.jobs = vm.sharedState.jobs
+    })
+  },
+  watch: {
+    'sharedState.jobs': 'jobsChanged'
+  },
   methods: {
     add_job () {
       this.$router.push('/form/add')
+    },
+    jobsChanged () {
+      console.log('Jobs changed!')
+    },
+    getItemLabel (item) {
+      return this.getLocationText(item.location)
+    },
+    getItemSublabel (item) {
+      var text = ''
+      var type = this.getElementTypeText(item.elementType)
+      var task = this.getElementTaskText(item.task)
+      console.log('task: ' + task)
+      if (type) {
+        text = type
+        if (task) {
+          text = type + ' - ' + task
+        }
+      }
+      else if (task) {
+        text = task
+      }
+      return text
+    },
+    getLocationText (id) {
+      let list = this.sharedState.elementGroups.filter(item => {
+        return (item.id === id)
+      })
+      if (list.length === 1) {
+        return list[0].name
+      }
+      else {
+        return ''
+      }
+    },
+    getElementTypeText (id) {
+      let list = this.sharedState.elementTypes.filter(item => {
+        return (item.id === id)
+      })
+      if (list.length === 1) {
+        return list[0].name
+      }
+      else {
+        return ''
+      }
+    },
+    getElementTaskText (id) {
+      let list = this.sharedState.elementTasks.filter(item => {
+        return (item.id === id)
+      })
+      if (list.length === 1) {
+        return list[0].name
+      }
+      else {
+        return ''
+      }
     }
   },
   mounted () {

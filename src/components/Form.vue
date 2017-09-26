@@ -18,14 +18,14 @@
   <q-tab-pane name="tab-fitxa" style="padding-top: 0">
   <div>
     <q-select
-      v-model="contract"
+      v-model="model.contract"
       v-show="showContract"
       float-label="Lot"
      :options="contractOptions"
     />
 
     <q-select
-      v-model="elementType"
+      v-model="model.elementType"
       float-label="Tipus d'element"
      :options="elementTypeOptions"
     />
@@ -36,7 +36,7 @@
     <q-select
       filter
       ref="sectorSelect"
-      v-model="location"
+      v-model="model.location"
       float-label="Sector"
       :options="elementGroupsOptions"
       style="flex-grow: 1;"
@@ -69,13 +69,13 @@
 
     <q-select
       ref="tascaSelect"
-      v-model="task"
+      v-model="model.task"
       float-label="Task"
       :options="taskOptions"
     />
 
     <q-input
-      v-model="note"
+      v-model="model.note"
       type="textarea"
       float-label="Observacions"
       :max-height="100"
@@ -122,26 +122,12 @@
 </template>
 
 <script>
-/*
-<q-search v-model="terms" placeholder="Start typing a country name">
-  <q-autocomplete @search="search" @selected="selected" />
-</q-search>
-
-<q-autocomplete v-model="terms" @search="search"></q-autocomplete>
-
-<q-autocomplete v-model="terms" @search="search" @selected="selected" :delay="0" :max-results="20" class="full-width">
-  <q-search v-model="terms" placeholder="Start typing a country name" />
-</q-autocomplete>
-*/
-import countries from 'data/autocomplete.json'
-
 import Vue from 'vue'
 
 import {
   QAutocomplete,
   QSearch,
   QInput,
-  filter,
   QSelect,
   QBtn,
   QTabs,
@@ -156,17 +142,6 @@ import {
 } from 'quasar'
 
 import ImageInputResizer from './ImageInputResizer.vue'
-
-function parseCountries () {
-  console.log('parseCountries')
-  return countries.map(country => {
-    return {
-      label: country,
-      // sublabel: 'sublabel',
-      value: country
-    }
-  })
-}
 
 export default {
   components: {
@@ -191,11 +166,14 @@ export default {
       loading: false,
       showContract: true,
       showLocationOptions: true,
-      contract: '',
-      elementType: '',
-      location: '',
-      task: '',
-      note: '',
+      model: {
+        // uuid: '',
+        // contract: '',
+        // elementType: '',
+        // location: '',
+        // task: '',
+        // note: ''
+      },
       gallery: [
         // Vue.API_ROOT + '/ajgirona/feines_proveidors/static/photos/mountains.jpg',
         // Vue.API_ROOT + '/ajgirona/feines_proveidors/static/photos/parallax1.jpg',
@@ -205,14 +183,14 @@ export default {
         // Vue.API_ROOT + '/ajgirona/feines_proveidors/static/photos/parallax2.jpg'
       ],
       terms: '',
-      countries: parseCountries(),
-      locationOptions: parseCountries(),
       sharedState: Vue.store.state
     }
   },
   computed: {
     contractOptions: function () {
       var options = []
+      console.log(this.sharedState)
+      console.log(this.sharedState.contracts)
       this.sharedState.contracts.forEach(function (element) {
         // console.log(element)
         options.push({label: element.name, value: element.id})
@@ -230,11 +208,11 @@ export default {
     elementGroupsOptions: function () {
       var options = []
       var self = this
-      if (!this.elementType) {
+      if (!this.model.elementType) {
         return options
       }
       this.sharedState.elementGroups.forEach(function (element) {
-        if (element.types.includes(self.elementType)) {
+        if (element.types.includes(self.model.elementType)) {
           options.push({label: element.name, value: element.id})
         }
       })
@@ -243,38 +221,92 @@ export default {
     taskOptions: function () {
       var options = []
       var self = this
-      if (!this.elementType) {
+      if (!this.model.elementType) {
         return options
       }
       this.sharedState.elementTasks.forEach(function (element) {
-        if (element.types.includes(self.elementType)) {
+        if (element.types.includes(self.model.elementType)) {
           options.push({label: element.name, value: element.id})
         }
       })
       return options
+    },
+    modelData: function () {
+      // watch all form variables
+      // https://github.com/vuejs/vue/issues/844
+      return (
+        // this.model,
+        this.model.contract,
+        this.model.elementType,
+        this.model.location,
+        this.model.task,
+        this.model.note,
+        new Date())
     }
+  },
+  beforeRouteEnter (to, from, next) {
+    if (to.path === '/form/add') {
+      next(vm => {
+        vm.model = {
+          uuid: '',
+          contract: '',
+          elementType: '',
+          location: '',
+          task: '',
+          note: ''
+        }
+        vm.model.uuid = vm.$moment().valueOf()
+        vm.model.id = -vm.model.uuid
+
+        // automatically select contract if there is only one option
+        if (vm.contractOptions.length === 1) {
+          vm.model.contract = vm.contractOptions[0].value
+        }
+      })
+    }
+    else {
+      console.log('Load model ' + to.params.id + ' from sharedState')
+      // if not found by ID, look in the store
+      console.log(to)
+      next(vm => {
+        console.log(to.params.id)
+        console.log(vm.sharedState.jobs)
+        if (vm.sharedState.jobs[to.params.id]) {
+          vm.model = vm.sharedState.jobs[to.params.id]
+        }
+        else {
+          vm.$router.push('/')
+          // throw 'not found'
+        }
+      })
+    }
+  },
+  beforeRouteUpdate (to, from, next) {
+    console.log('Params update while in this form is not supported')
   },
   created () {
     console.log('Form created')
   },
   mounted () {
-    if (this.$route.path === '/form/add') {
-      if (this.contractOptions.length === 1) {
-        this.contract = this.contractOptions[0].value
-      }
-    }
+  },
+  watch: {
+    'modelData': 'modelChanged'
   },
   methods: {
+    includes (terms, {field, list}) {
+      const token = terms.toLowerCase()
+      return list.filter(item => ('' + item[field]).toLowerCase().includes(token))
+    },
     search (terms, done) {
       console.log(this.elementGroupsOptions)
       // FIXME: _.debounce(function () {
       setTimeout(() => {
         console.log('Filter items...')
-        done(filter(terms, {field: 'label', list: this.elementGroupsOptions}))
+        done(this.includes(terms, {field: 'label', list: this.elementGroupsOptions}))
       }, 250)
     },
     selectedSector (item) {
-      this.location = item.value
+      this.model.location = item.value
       this.searchSectorClose()
     },
     searchSector () {
@@ -328,6 +360,13 @@ export default {
       // or alternatively inside your components you can use
       this.$scrollTo('#' + id, 500, options)
       console.log('scroll end')
+    },
+    modelChanged () {
+      // FIXME: debounce
+      console.log('Model has changed!!!')
+      Vue.set(this.sharedState.jobs, this.model.id, this.model)
+      Vue.store.localStore.save({key: 'jobs', data: this.sharedState.jobs})
+      window.local = Vue.store.localStore
     }
   }
 }
