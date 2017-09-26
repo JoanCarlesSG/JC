@@ -47,7 +47,7 @@
 
       <q-list no-border striped>
         <q-list-header>Feines</q-list-header>
-        <q-item v-for="item in jobs" :to="'/form/' + item.id">
+        <q-item v-for="item in jobs" :key="item.id" :to="'/form/' + item.id">
             <q-item-side left icon="create" />
             <q-item-main>
               <q-item-tile label>{{ getItemLabel(item) }}</q-item-tile>
@@ -127,7 +127,6 @@ export default {
       var text = ''
       var type = this.getElementTypeText(item.elementType)
       var task = this.getElementTaskText(item.task)
-      console.log('task: ' + task)
       if (type) {
         text = type
         if (task) {

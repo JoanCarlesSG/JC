@@ -1,11 +1,6 @@
 <template>
   <div>
 
-  <image-input-resizer
-    ref="imageinputresizer" 
-    @ready="imageReady"
-    />
-
   <div class="loading" v-if="loading">
     Loging in...
   </div>
@@ -14,6 +9,7 @@
 <q-tabs no-pane-border>
   <q-tab default slot="title" name="tab-fitxa" icon="assignment" />
   <q-tab slot="title" name="tab-fotos" icon="photo" />
+  <!-- <q-tab slot="title" name="tab-sector" icon="map" /> -->
 
   <q-tab-pane name="tab-fitxa" style="padding-top: 0">
   <div>
@@ -82,38 +78,14 @@
       :min-rows="1"
     />
 
-    <div style="display: none; justify-content: space-between; margin: 40px 0px 5px 0px;">
-      <q-btn icon="photo" @click="newPhoto(true)" style="">Foto abans</q-btn>
-      <q-btn icon="photo" @click="newPhoto(false)" sytle="margin-left: auto;">Foto després</q-btn>
-    </div>
+    <!-- <div style="justify-content: space-between; margin: 40px 0px 5px 0px; text-align: right">
+      <q-btn small color="micro" icon="done" @click="" sytle="margin-left: auto;">Tancar tasca</q-btn>
+    </div> -->
   </div>
   </q-tab-pane>
 
   <q-tab-pane name="tab-fotos" style="padding: 0px">
-    <div style="display: flex; justify-content: space-between; margin: 12px 10px 5px 9px;">
-      <q-btn color="micro" icon="photo" @click="newPhoto(true)" style="">Foto abans</q-btn>
-      <q-btn color="micro" icon="photo" @click="newPhoto(false)" sytle="margin-left: auto;">Foto després</q-btn>
-    </div>
-    
-    <q-card inline v-for="item in gallery" :id="'photo_' + item.id">
-      <q-card-media>
-        <img @click="photoclick" :src="item.src" style="height: auto; width: 100%">
-      </q-card-media>
-      <q-card-title>
-        <div style="font-size: 16px; line-height: 18px">Foto abans</div>
-        <div style="font-size: 12px; line-height: 14px">Taken on 09/09/2017</div>
-        <div slot="right">
-          <q-btn flat small @click="photoclick" ><q-icon name="edit" /></q-btn>
-          <q-btn flat small @click="photoclick" ><q-icon name="delete" /></q-btn>
-        </div>
-      </q-card-title>
-    </q-card>
-
-    <div v-if="gallery.length > 0" style="display: flex; justify-content: space-between; margin: 12px 10px 50px 9px;">
-      <q-btn color="micro" icon="photo" @click="newPhoto(true)" style="">Foto abans</q-btn>
-      <q-btn color="micro" icon="photo" @click="newPhoto(false)" sytle="margin-left: auto;">Foto després</q-btn>
-    </div>
-
+    <photos :photos="model.photos" />
   </q-tab-pane>
 
 </q-tabs>
@@ -141,7 +113,7 @@ import {
   QIcon
 } from 'quasar'
 
-import ImageInputResizer from './ImageInputResizer.vue'
+import Photos from './Photos.vue'
 
 export default {
   components: {
@@ -159,7 +131,7 @@ export default {
     QCardSeparator,
     QCardMain,
     QIcon,
-    ImageInputResizer
+    Photos
   },
   data () {
     return {
@@ -173,6 +145,7 @@ export default {
         // location: '',
         // task: '',
         // note: ''
+        photos: []
       },
       gallery: [
         // Vue.API_ROOT + '/ajgirona/feines_proveidors/static/photos/mountains.jpg',
@@ -241,6 +214,7 @@ export default {
         this.model.location,
         this.model.task,
         this.model.note,
+        this.model.photos,
         new Date())
     }
   },
@@ -253,7 +227,8 @@ export default {
           elementType: '',
           location: '',
           task: '',
-          note: ''
+          note: '',
+          photos: []
         }
         vm.model.uuid = vm.$moment().valueOf()
         vm.model.id = -vm.model.uuid
@@ -273,6 +248,9 @@ export default {
         console.log(vm.sharedState.jobs)
         if (vm.sharedState.jobs[to.params.id]) {
           vm.model = vm.sharedState.jobs[to.params.id]
+          if (!vm.model.photos) {
+            vm.model.photos = []
+          }
         }
         else {
           vm.$router.push('/')
@@ -319,47 +297,6 @@ export default {
     },
     searchSectorClose () {
       this.showLocationOptions = true
-    },
-    photoclick (event) {
-      console.log('photo click')
-      window.moment = this.$moment
-    },
-    newPhoto (abans) {
-      this.$refs.imageinputresizer.newImage()
-    },
-    imageReady (uri) {
-      let now = this.$moment()
-      this.gallery.push({
-        src: uri,
-        timestamp: now.format(this.$moment().ISO_8601),
-        id: now.valueOf()
-      })
-
-      let self = this
-      Vue.nextTick(function () {
-        self.scrollToPhoto('photo_' + now.valueOf())
-      })
-    },
-    scrollToPhoto (id) {
-      console.log('scroll start')
-      var options = {
-        // container: '#' + id,
-        // easing: 'ease-in',
-        offset: -73,
-        cancelable: true,
-        onDone: function () {
-          // scrolling is done
-        },
-        onCancel: function () {
-          // scrolling has been interrupted
-        },
-        x: false,
-        y: true
-      }
-
-      // or alternatively inside your components you can use
-      this.$scrollTo('#' + id, 500, options)
-      console.log('scroll end')
     },
     modelChanged () {
       // FIXME: debounce
