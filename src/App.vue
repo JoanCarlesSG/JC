@@ -119,6 +119,10 @@ export default {
     return {
       loading: false,
       startup: null,
+      queue: {
+        running: false,
+        photos: []
+      },
       errors: [],
       sharedState: Vue.store.state
     }
@@ -126,6 +130,7 @@ export default {
   created: function () {
     try {
       this.sharedState.access_token = localStorage.getItem('access_token')
+      setInterval(this.queueCheck, 10000)
     }
     catch (e) {
       console.log(e)
@@ -133,7 +138,8 @@ export default {
   },
   watch: {
     // call again the method if the route changes
-    '$route': 'routeChanged'
+    '$route': 'routeChanged',
+    'sharedState.newPhotos': 'photoAdded'
   },
   methods: {
     logout () {
@@ -197,17 +203,21 @@ export default {
             this.loading = false
           })
           .catch(e => {
-            console.log('startup response ERROR')
-            this.errors.push(e)
-            console.log(this.errors)
-            this.loading = false
-            Vue.store.localStore.get('startup', function (me) {
-              console.log('startup cache')
-              self.loadStartupData(me.data)
+            if (e.request.status === 403) {
               this.loading = false
-            })
-
-            // this.$router.push('/login')
+              this.$router.push('/login')
+            }
+            else {
+              console.log('startup response ERROR')
+              this.errors.push(e)
+              console.log(this.errors)
+              this.loading = false
+              Vue.store.localStore.get('startup', function (me) {
+                console.log('startup cache')
+                self.loadStartupData(me.data)
+                this.loading = false
+              })
+            }
           })
       }
     },
@@ -235,6 +245,26 @@ export default {
         console.log('Jobs: ' + newJobs)
         // update saved list of jobs
       }
+    },
+    photoAdded () {
+      console.log('NEW photo added')
+      let photo = this.sharedState.newPhotos[0]
+      console.log(photo)
+      this.queue.photos.push(photo)
+      Vue._.remove(this.sharedState.newPhotos, photo)
+    },
+    queueCheck () {
+      console.log('Queue CHECK! -> running? ' + this.queue.running)
+      if (!this.queue.running && this.queue.photos.length > 0) {
+        this.queue.running = true
+        console.log('Queue started')
+        let photo = this.queue.photos[0]
+        this.uploadPhoto(photo)
+      }
+    },
+    uploadPhoto (photo) {
+      console.log('Uploading photo ... ' + photo.id)
+      // src.startsWith('data:image')
     }
   }
 }

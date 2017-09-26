@@ -50,6 +50,7 @@ import ImageInputResizer from './ImageInputResizer.vue'
 
 export default {
   props: {
+    parentId: Number,
     photos: Array
   },
   components: {
@@ -66,6 +67,7 @@ export default {
   },
   data () {
     return {
+      sharedState: Vue.store.state
     }
   },
   methods: {
@@ -74,11 +76,14 @@ export default {
     },
     imageReady (uri) {
       let now = this.$moment()
-      this.photos.push({
+      let photo = {
         src: uri,
         timestamp: now.format(this.$moment().ISO_8601),
-        id: -now.valueOf()
-      })
+        id: -now.valueOf(),
+        parentId: this.parentId
+      }
+      this.photos.push(photo)
+      this.sharedState.newPhotos.push(photo)
 
       let self = this
       Vue.nextTick(function () {

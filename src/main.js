@@ -30,6 +30,10 @@ import axios from 'axios'
 import VueAxios from 'vue-axios'
 Vue.use(VueAxios, axios)
 
+import lodash from 'lodash'
+import VueLodash from 'vue-lodash'
+Vue.use(VueLodash, lodash)
+
 Vue.config.productionTip = false
 Vue.use(Quasar) // Install Quasar Framework
 
@@ -48,7 +52,8 @@ import Lawnchair from 'lawnchair'
 var store = {
   state: {
     access_token: '',
-    message: 'Hello!'
+    message: 'Hello!',
+    newPhotos: []
   },
   localStore: new Lawnchair(),
   actionA: function () {

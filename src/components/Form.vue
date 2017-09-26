@@ -85,7 +85,7 @@
   </q-tab-pane>
 
   <q-tab-pane name="tab-fotos" style="padding: 0px">
-    <photos :photos="model.photos" />
+    <photos :parentId='model.id' :photos="model.photos" />
   </q-tab-pane>
 
 </q-tabs>
@@ -275,14 +275,10 @@ export default {
       const token = terms.toLowerCase()
       return list.filter(item => ('' + item[field]).toLowerCase().includes(token))
     },
-    search (terms, done) {
-      console.log(this.elementGroupsOptions)
-      // FIXME: _.debounce(function () {
-      setTimeout(() => {
-        console.log('Filter items...')
-        done(this.includes(terms, {field: 'label', list: this.elementGroupsOptions}))
-      }, 250)
-    },
+    search: Vue._.debounce(function (terms, done) {
+      console.log('Filter items...')
+      done(this.includes(terms, {field: 'label', list: this.elementGroupsOptions}))
+    }, 100),
     selectedSector (item) {
       this.model.location = item.value
       this.searchSectorClose()
@@ -298,13 +294,18 @@ export default {
     searchSectorClose () {
       this.showLocationOptions = true
     },
-    modelChanged () {
-      // FIXME: debounce
+    modelChanged: Vue._.debounce(function () {
       console.log('Model has changed!!!')
       Vue.set(this.sharedState.jobs, this.model.id, this.model)
-      Vue.store.localStore.save({key: 'jobs', data: this.sharedState.jobs})
+      try {
+        Vue.store.localStore.save({key: 'jobs', data: this.sharedState.jobs})
+        console.log('localStorage used: ' + JSON.stringify(localStorage).length / 1024 + ' KB')
+      }
+      catch (e) {
+        alert('Not enough space on local storage')
+      }
       window.local = Vue.store.localStore
-    }
+    }, 500)
   }
 }
 </script>
