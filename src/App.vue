@@ -7,7 +7,7 @@
       :left-class="{'bg-grey-2': true}"
     >
       <q-toolbar slot="header" class="">
-        <q-toolbar-title>
+        <q-toolbar-title @click="$router.push('/')">
           Feines proveïdors
           <div slot="subtitle">Ajuntament de Girona</div>
         </q-toolbar-title>
@@ -46,7 +46,7 @@
         </q-list>
         
         <p style="text-align: center; margin-top: 30px; font-size: 0.8em" class="text-grey-7">
-          Versió 0.2.0
+          Versió 0.3.0
         </p>
 
         <p style="text-align: center; margin-top: 30px; font-size: 0.8em" class="text-grey-7">
