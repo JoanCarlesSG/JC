@@ -245,6 +245,14 @@ export default {
         console.log('Jobs: ' + newJobs)
         // update saved list of jobs
       }
+
+      Vue.store.localStore.get('queue', function (queue) {
+        console.log('saved queue')
+        console.log(queue)
+        if (queue) {
+          self.queue = queue.data
+        }
+      })
     },
     photoAdded () {
       console.log('NEW photo added')
@@ -252,6 +260,7 @@ export default {
       console.log(photo)
       this.queue.photos.push(photo)
       Vue._.remove(this.sharedState.newPhotos, photo)
+      Vue.store.localStore.save({key: 'queue', data: this.queue})
     },
     queueCheck () {
       console.log('Queue CHECK! -> running? ' + this.queue.running)
