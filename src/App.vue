@@ -100,7 +100,7 @@ import {
 
 } from 'quasar'
 
-import blobUtil from 'blob-util'
+import photoUtil from './photoUtil.js'
 
 export default {
   components: {
@@ -240,19 +240,9 @@ export default {
           self.sharedState.jobs = jobs.data
           Vue._.forEach(self.sharedState.jobs, function (job) {
             job.photos.forEach(photo => {
-              if (photo.src.startsWith('blob:')) {
-                // TODO: refactor into method for getting photo blob
-                Vue.store.localStore.get(photo.name, function (base64) {
-                  if (base64.data) {
-                    blobUtil.dataURLToBlob(base64.data).then(function (blob) {
-                      photo.src = URL.createObjectURL(blob)
-                    }).catch(function (err) {
-                      // error
-                      console.log(err)
-                    })
-                  }
-                })
-              }
+              photoUtil.getBlob(photo, function (blob) {
+                photo.src = URL.createObjectURL(blob)
+              })
             })
           })
         }
