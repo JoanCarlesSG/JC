@@ -74,10 +74,14 @@ export default {
     newPhoto (abans) {
       this.$refs.imageinputresizer.newImage()
     },
-    imageReady (uri) {
+    imageReady (image) {
+      let url = URL.createObjectURL(image)
+      console.log(url)
       let now = this.$moment()
       let photo = {
-        src: uri,
+        src: url,
+        data: image,
+        name: now.valueOf() + '.jpg',
         timestamp: now.format(this.$moment().ISO_8601),
         id: -now.valueOf(),
         parentId: this.parentId
