@@ -14,35 +14,7 @@ import { format } from 'quasar'
 // destructuring to keep only what is needed
 const { humanStorageSize } = format
 
-// from https://github.com/nolanlawson/blob-util/blob/5f9598e158a00139b1cbdd89c03e425ac07e1dd6/lib/index.js
-function binaryStringToArrayBuffer (binary) {
-  var length = binary.length
-  var buf = new ArrayBuffer(length)
-  var arr = new Uint8Array(buf)
-  var i = -1
-  while (++i < length) {
-    arr[i] = binary.charCodeAt(i)
-  }
-  return buf
-}
-
-function createBlob (parts, options) {
-  options = options || {}
-  if (typeof options === 'string') {
-    options = {type: options}
-  }
-  return new Blob(parts, options)
-}
-
-function dataURLToBlob (dataURL) {
-  return Promise.resolve().then(function () {
-    var type = dataURL.match(/data:([^;]+)/)[1]
-    var base64 = dataURL.replace(/^[^,]+,/, '')
-
-    var buff = binaryStringToArrayBuffer(atob(base64))
-    return createBlob([buff], {type: type})
-  })
-}
+import blobUtil from 'blob-util'
 
 export default {
   name: 'image-input-resizer',
@@ -100,8 +72,8 @@ export default {
             let canvas = self.imageToCanvas(img, width, height)
             // self.$emit('ready', canvas.toDataURL('image/jpeg'))
             let dataUrl = canvas.toDataURL('image/jpeg')
-            dataURLToBlob(dataUrl).then(function (blob) {
-              self.$emit('ready', blob)
+            blobUtil.dataURLToBlob(dataUrl).then(function (blob) {
+              self.$emit('ready', {blob: blob, base64: dataUrl})
             }).catch(function (err) {
               // error
               console.log(err)
@@ -134,8 +106,8 @@ export default {
       // this.$emit('ready', 'data:image/jpeg;base64,' + uri)
       let dataUrl = 'data:image/jpeg;base64,' + uri
       let self = this
-      dataURLToBlob(dataUrl).then(function (blob) {
-        self.$emit('ready', blob)
+      blobUtil.dataURLToBlob(dataUrl).then(function (blob) {
+        self.$emit('ready', {blob: blob, base64: dataUrl})
       }).catch(function (err) {
         // error
         console.log(err)

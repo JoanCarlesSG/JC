@@ -84,19 +84,21 @@ export default {
             fileWriter.onwriteend = function (e) {
               console.log('IMAGE SAVED TO DISK')
               photo.src = fileEntry.toURL()
-              delete photo.data
+              delete photo.blob
+              delete photo.base64
               console.log(photo)
               self.photoSaved(photo)
             }
-            fileWriter.write(photo.data)
+            fileWriter.write(photo.blob)
           })
         })
       })
     },
     localStorageSaveFile (photo) {
-      Vue.store.localStore.save({key: photo.name, data: photo.data})
-      photo.src = URL.createObjectURL(photo.data)
-      delete photo.data
+      Vue.store.localStore.save({key: photo.name, data: photo.base64})
+      photo.src = URL.createObjectURL(photo.blob)
+      delete photo.blob
+      delete photo.base64
       console.log(photo)
       this.photoSaved(photo)
     },
@@ -109,16 +111,12 @@ export default {
         self.scrollToPhoto('photo_' + photo.id)
       })
     },
-    imageReady (image) {
+    imageReady (photo) {
       let now = this.$moment()
-      let filename = now.valueOf() + '.jpg'
-      let photo = {
-        data: image,
-        name: filename,
-        timestamp: now.format(this.$moment().ISO_8601),
-        id: -now.valueOf(),
-        parentId: this.parentId
-      }
+      photo.name = now.valueOf() + '.jpg'
+      photo.timestamp = now.format(this.$moment().ISO_8601)
+      photo.id = -now.valueOf()
+      photo.parentId = this.parentId
 
       // save image to persistent file
       if (navigator && navigator.camera) {

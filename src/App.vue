@@ -100,6 +100,8 @@ import {
 
 } from 'quasar'
 
+import blobUtil from 'blob-util'
+
 export default {
   components: {
     QLayout,
@@ -203,6 +205,7 @@ export default {
             this.loading = false
           })
           .catch(e => {
+            console.log(e)
             if (e.request.status === 403) {
               this.loading = false
               this.$router.push('/login')
@@ -235,6 +238,23 @@ export default {
         console.log(jobs)
         if (jobs) {
           self.sharedState.jobs = jobs.data
+          Vue._.forEach(self.sharedState.jobs, function (job) {
+            job.photos.forEach(photo => {
+              if (photo.src.startsWith('blob:')) {
+                // TODO: refactor into method for getting photo blob
+                Vue.store.localStore.get(photo.name, function (base64) {
+                  if (base64.data) {
+                    blobUtil.dataURLToBlob(base64.data).then(function (blob) {
+                      photo.src = URL.createObjectURL(blob)
+                    }).catch(function (err) {
+                      // error
+                      console.log(err)
+                    })
+                  }
+                })
+              }
+            })
+          })
         }
         else {
           self.sharedState.jobs = {}
