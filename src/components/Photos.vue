@@ -74,25 +74,59 @@ export default {
     newPhoto (abans) {
       this.$refs.imageinputresizer.newImage()
     },
-    imageReady (image) {
-      let url = URL.createObjectURL(image)
-      console.log(url)
-      let now = this.$moment()
-      let photo = {
-        src: url,
-        data: image,
-        name: now.valueOf() + '.jpg',
-        timestamp: now.format(this.$moment().ISO_8601),
-        id: -now.valueOf(),
-        parentId: this.parentId
-      }
+    cordovaSaveFile (photo) {
+      let self = this
+      window.requestFileSystem(window.LocalFileSystem.PERSISTENT, 0, function (fs) {
+        console.log(fs)
+        fs.root.getFile(photo.name, { create: true, exclusive: false }, function (fileEntry) {
+          console.log(fileEntry)
+          fileEntry.createWriter(function (fileWriter) {
+            fileWriter.onwriteend = function (e) {
+              console.log('IMAGE SAVED TO DISK')
+              photo.src = fileEntry.toURL()
+              delete photo.data
+              console.log(photo)
+              self.photoSaved(photo)
+            }
+            fileWriter.write(photo.data)
+          })
+        })
+      })
+    },
+    localStorageSaveFile (photo) {
+      Vue.store.localStore.save({key: photo.name, data: photo.data})
+      photo.src = URL.createObjectURL(photo.data)
+      delete photo.data
+      console.log(photo)
+      this.photoSaved(photo)
+    },
+    photoSaved (photo) {
       this.photos.push(photo)
       this.sharedState.newPhotos.push(photo)
 
       let self = this
       Vue.nextTick(function () {
-        self.scrollToPhoto('photo_' + now.valueOf())
+        self.scrollToPhoto('photo_' + photo.id)
       })
+    },
+    imageReady (image) {
+      let now = this.$moment()
+      let filename = now.valueOf() + '.jpg'
+      let photo = {
+        data: image,
+        name: filename,
+        timestamp: now.format(this.$moment().ISO_8601),
+        id: -now.valueOf(),
+        parentId: this.parentId
+      }
+
+      // save image to persistent file
+      if (navigator && navigator.camera) {
+        this.cordovaSaveFile(photo)
+      }
+      else {
+        this.localStorageSaveFile(photo)
+      }
     },
     scrollToPhoto (id) {
       console.log('scroll start')
