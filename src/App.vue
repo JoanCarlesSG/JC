@@ -232,6 +232,8 @@ export default {
       this.sharedState.elementTasks = startup.element_tasks
       console.log('Startup data loaded')
 
+      var photoCache = {}
+
       let self = this
       Vue.store.localStore.get('jobs', function (jobs) {
         console.log('saved jobs')
@@ -243,6 +245,7 @@ export default {
               photoUtil.getBlob(photo, function (blob) {
                 photo.src = URL.createObjectURL(blob)
               })
+              photoCache[photo.id] = photo
             })
           })
         }
@@ -260,7 +263,16 @@ export default {
         console.log('saved queue')
         console.log(queue)
         if (queue) {
-          self.queue = queue.data
+          queue.data.photos.forEach(photo => {
+            let cachedPhoto = photoCache[photo.id]
+            if (cachedPhoto) {
+              self.queue.photos.push(cachedPhoto)
+            }
+            else {
+              console.error('photo not found when loading queue')
+              console.error(photo)
+            }
+          })
         }
       })
     },
@@ -282,8 +294,38 @@ export default {
       }
     },
     uploadPhoto (photo) {
+      let self = this
       console.log('Uploading photo ... ' + photo.id)
       // src.startsWith('data:image')
+
+      var config = {
+        headers: {'Authorization': 'Bearer '.concat(this.sharedState.access_token)},
+        timeout: 60000
+      }
+
+      var url = Vue.API_ROOT + '/ajgirona/feines_proveidors/api/v1/jobphotos/'
+      const data = new FormData()
+      console.log(photo)
+
+      photoUtil.getBlob(photo, function (blob) {
+        console.info('Uploading photo ' + photo.id)
+
+        data.append('photo', blob, photo.name)
+        self.axios.post(url, data, config)
+          .then(function (response) {
+            console.debug('Response:')
+            console.debug(response)
+            let jobphoto = response.data
+            photo.id = jobphoto.id
+            Vue.store.localStore.save({key: 'jobs', data: self.sharedState.jobs})
+            Vue._.remove(self.queue.photos, photo)
+            Vue.store.localStore.save({key: 'queue', data: self.queue})
+            self.queue.running = false
+          })
+          .catch(function (error) {
+            console.log(error)
+          })
+      })
     }
   }
 }
