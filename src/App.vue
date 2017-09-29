@@ -44,7 +44,7 @@
           </q-item>
           -->
         </q-list>
-        
+
         <p style="text-align: center; margin-top: 30px; font-size: 0.8em" class="text-grey-7">
           Versió 0.3.0
         </p>
@@ -316,11 +316,25 @@ export default {
             console.debug('Response:')
             console.debug(response)
             let jobphoto = response.data
+            let src = photo.src
             photo.id = jobphoto.id
-            Vue.store.localStore.save({key: 'jobs', data: self.sharedState.jobs})
+
+            var img = new Image()
+            img.onload = function () {
+              console.log('Use remote image')
+              photo.src = jobphoto.photo
+              URL.revokeObjectURL(src)
+              console.log('Save jobs...')
+              Vue.store.localStore.save({key: 'jobs', data: self.sharedState.jobs})
+            }
+            img.onerror = img.onload
+            img.src = jobphoto.photo
+            console.log('Load ' + img.src)
+
             Vue._.remove(self.queue.photos, photo)
             Vue.store.localStore.save({key: 'queue', data: self.queue})
             self.queue.running = false
+            photoUtil.deleteBlob(src, photo.name)
           })
           .catch(function (error) {
             console.log(error)
@@ -333,7 +347,7 @@ export default {
 
 <style>
 .q-toolbar { background: #0d65a3; }
-.q-toolbar-title { 
+.q-toolbar-title {
   background: url(https://server3.microdisseny.com/ajgirona/feines_proveidors/static/feines_proveidors/logo_ajgirona-white.svg) no-repeat left 10px;
   background-size: 36px 36px;
   padding: 10px 45px 10px
@@ -347,7 +361,7 @@ export default {
 }
 
 .q-btn.q-btn-rectangle.bg-micro {
-  color: #fff; 
+  color: #fff;
   background: #3b8ac3;
 }
 
@@ -386,7 +400,7 @@ div.data-sync {
   width:100%;
 	height:100%;
   background: rgba(13, 101, 163, 0.9);
-  position: absolute; 
+  position: absolute;
   z-index: 1000;
   text-align: center;
 }
