@@ -52,15 +52,46 @@ import Lawnchair from 'lawnchair'
 var store = {
   state: {
     access_token: '',
-    message: 'Hello!',
-    newPhotos: []
+    jobs: {},
+    queue: {
+      running: false,
+      jobs: [],
+      photos: []
+    }
   },
   localStore: new Lawnchair(),
-  actionA: function () {
-    this.state.message = 'action A triggered'
+
+  stateSave: function () {
+    this.localStore.save({key: 'access_token', data: this.state.access_token})
   },
-  actionB: function () {
-    this.state.message = 'action B triggered'
+  stateLoad: function () {
+    let self = this
+    this.localStore.get('access_token', function (accessToken) {
+      self.state.access_token = accessToken.data
+    })
+  },
+  jobsSave: function () {
+    this.localStore.save({key: 'jobs', data: this.state.jobs})
+  },
+  queueSave: function () {
+    this.localStore.save({key: 'queue', data: this.state.queue})
+  },
+  queueSetRunning: function () {
+    this.state.queue.running = true
+  },
+  queueJobsEmpty: function () {
+    return this.state.queue.jobs.length === 0
+  },
+  queueJobsFirst: function () {
+    return this.state.queue.jobs[0]
+  },
+  queueAddJob: function (job) {
+    this.state.queue.jobs.push(job)
+    this.queueSave()
+  },
+  queueAddFoto: function (photo) {
+    this.state.queue.photos.push(photo)
+    this.queueSave()
   }
 }
 Vue.store = store

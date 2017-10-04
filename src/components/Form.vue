@@ -233,6 +233,8 @@ export default {
         vm.model.uuid = vm.$moment().valueOf()
         vm.model.id = -vm.model.uuid
 
+        Vue.store.queueAddJob(vm.model)
+
         // automatically select contract if there is only one option
         if (vm.contractOptions.length === 1) {
           vm.model.contract = vm.contractOptions[0].value
@@ -261,6 +263,18 @@ export default {
   },
   beforeRouteUpdate (to, from, next) {
     console.log('Params update while in this form is not supported')
+  },
+  beforeRouteLeave (to, from, next) {
+    console.log('FORM leaveing to: ')
+    console.log(to)
+    console.log('from: ')
+    console.log(from)
+    console.log('this:')
+    console.log(this)
+    next(vm => {
+      console.log('NEXT:')
+      console.log(vm)
+    })
   },
   created () {
     console.log('Form created')
@@ -298,14 +312,15 @@ export default {
       console.log('Model has changed!!!')
       Vue.set(this.sharedState.jobs, this.model.id, this.model)
       try {
-        Vue.store.localStore.save({key: 'jobs', data: this.sharedState.jobs})
+        Vue.store.jobsSave()
         console.log('localStorage used: ' + JSON.stringify(localStorage).length / 1024 + ' KB')
       }
       catch (e) {
+        console.log(e)
         alert('Not enough space on local storage')
       }
       window.local = Vue.store.localStore
-    }, 500)
+    }, 5000)
   }
 }
 </script>

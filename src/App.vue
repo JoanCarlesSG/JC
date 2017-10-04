@@ -121,17 +121,13 @@ export default {
     return {
       loading: false,
       startup: null,
-      queue: {
-        running: false,
-        photos: []
-      },
       errors: [],
       sharedState: Vue.store.state
     }
   },
   created: function () {
     try {
-      this.sharedState.access_token = localStorage.getItem('access_token')
+      Vue.store.stateLoad()
       setInterval(this.queueCheck, 10000)
     }
     catch (e) {
@@ -140,8 +136,7 @@ export default {
   },
   watch: {
     // call again the method if the route changes
-    '$route': 'routeChanged',
-    'sharedState.newPhotos': 'photoAdded'
+    '$route': 'routeChanged'
   },
   methods: {
     logout () {
@@ -239,8 +234,9 @@ export default {
         console.log('saved jobs')
         console.log(jobs)
         if (jobs) {
-          self.sharedState.jobs = jobs.data
-          Vue._.forEach(self.sharedState.jobs, function (job) {
+          Vue._.forEach(jobs.data, function (job) {
+            console.log('Adding job ' + job.id)
+            self.sharedState.jobs[job.id] = job
             job.photos.forEach(photo => {
               photoUtil.getBlob(photo, function (blob) {
                 photo.src = URL.createObjectURL(blob)
@@ -248,9 +244,6 @@ export default {
               photoCache[photo.id] = photo
             })
           })
-        }
-        else {
-          self.sharedState.jobs = {}
         }
       })
 
@@ -266,7 +259,7 @@ export default {
           queue.data.photos.forEach(photo => {
             let cachedPhoto = photoCache[photo.id]
             if (cachedPhoto) {
-              self.queue.photos.push(cachedPhoto)
+              self.sharedState.queue.photos.push(cachedPhoto)
             }
             else {
               console.error('photo not found when loading queue')
@@ -276,27 +269,69 @@ export default {
         }
       })
     },
-    photoAdded () {
-      console.log('NEW photo added')
-      let photo = this.sharedState.newPhotos[0]
-      console.log(photo)
-      this.queue.photos.push(photo)
-      Vue._.remove(this.sharedState.newPhotos, photo)
-      Vue.store.localStore.save({key: 'queue', data: this.queue})
-    },
     queueCheck () {
-      console.log('Queue CHECK! -> running? ' + this.queue.running)
-      if (!this.queue.running && this.queue.photos.length > 0) {
-        this.queue.running = true
+      console.log('Queue CHECK! -> running? ' + this.sharedState.queue.running)
+
+      if (this.sharedState.queue.running) {
+        console.debug('Queue already running')
+        return
+      }
+
+      if (!Vue.store.queueJobsEmpty()) {
+        Vue.store.queueSetRunning(true)
+        let job = Vue.store.queueJobsFirst()
+        this.uploadJob(job)
+        return
+      }
+
+      if (this.sharedState.queue.photos.length > 0) {
+        Vue.store.queueSetRunning(true)
         console.log('Queue started')
-        let photo = this.queue.photos[0]
+        let photo = this.sharedState.queue.photos[0]
         this.uploadPhoto(photo)
       }
+    },
+    uploadJob (job) {
+      console.log('Uploading job ... ' + job.id)
+
+      var config = {
+        headers: {'Authorization': 'Bearer '.concat(this.sharedState.access_token)},
+        timeout: 60000
+      }
+
+      var url = Vue.API_ROOT + '/ajgirona/feines_proveidors/api/v1/jobs/'
+
+      const data = new FormData()
+      data.append('contract', job.contract)
+      data.append('elementType', job.elementType)
+      data.append('location', job.location)
+      data.append('task', job.task)
+      data.append('note', job.note)
+      if (job.photos.length > 0) {
+        data.append('photos', job.photos)
+      }
+
+      this.axios.post(url, data, config)
+        .then(function (response) {
+          console.debug('Response:')
+          console.debug(response)
+          let data = response.data
+
+          job.id = data.id
+          console.error('Save jobs...')
+          // Vue.store.localStore.save({key: 'jobs', data: self.sharedState.jobs})
+
+          console.error('Remove from queue')
+          // Vue.store.localStore.save({key: 'queue', data: self.sharedState.queue})
+          // self.sharedState.queue.running = false
+        })
+        .catch(function (error) {
+          console.log(error)
+        })
     },
     uploadPhoto (photo) {
       let self = this
       console.log('Uploading photo ... ' + photo.id)
-      // src.startsWith('data:image')
 
       var config = {
         headers: {'Authorization': 'Bearer '.concat(this.sharedState.access_token)},
@@ -311,6 +346,7 @@ export default {
         console.info('Uploading photo ' + photo.id)
 
         data.append('photo', blob, photo.name)
+        console.error('FIXME: add job id')
         self.axios.post(url, data, config)
           .then(function (response) {
             console.debug('Response:')
@@ -331,9 +367,9 @@ export default {
             img.src = jobphoto.photo
             console.log('Load ' + img.src)
 
-            Vue._.remove(self.queue.photos, photo)
-            Vue.store.localStore.save({key: 'queue', data: self.queue})
-            self.queue.running = false
+            Vue._.remove(self.sharedState.queue.photos, photo)
+            Vue.store.localStore.save({key: 'queue', data: self.sharedState.queue})
+            self.sharedState.queue.running = false
             photoUtil.deleteBlob(src, photo.name)
           })
           .catch(function (error) {

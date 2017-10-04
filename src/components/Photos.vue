@@ -1,7 +1,7 @@
 <template>
   <div>
     <image-input-resizer
-      ref="imageinputresizer" 
+      ref="imageinputresizer"
       @ready="imageReady"
       />
 
@@ -9,7 +9,7 @@
       <q-btn color="micro" icon="photo" @click="newPhoto(true)" style="">Foto abans</q-btn>
       <q-btn color="micro" icon="photo" @click="newPhoto(false)" sytle="margin-left: auto;">Foto després</q-btn>
     </div>
-    
+
     <q-card inline v-for="item in photos" :key="item.id" :id="'photo_' + item.id">
       <q-card-media>
         <img :src="item.src" style="height: auto; width: 100%">
@@ -104,7 +104,7 @@ export default {
     },
     photoSaved (photo) {
       this.photos.push(photo)
-      this.sharedState.newPhotos.push(photo)
+      Vue.store.queueAddPhoto(photo)
 
       let self = this
       Vue.nextTick(function () {

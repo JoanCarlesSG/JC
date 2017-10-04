@@ -87,7 +87,7 @@ export default {
         .then(function (response) {
           console.log(response.data)
           self.sharedState.access_token = response.data.access_token
-          localStorage.setItem('access_token', response.data.access_token)
+          Vue.store.stateSave()
           // self.$router.go(-1)
           self.loading = false
           console.log('push("/"')
