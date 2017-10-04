@@ -168,8 +168,7 @@ export default {
       }
 
       console.log('Auth ok?')
-      console.log(this.sharedState.access_token)
-      if (this.sharedState.access_token == null) {
+      if (!this.sharedState.access_token) {
         this.loading = false
         this.$router.push('/login')
         console.log('Needs login')
