@@ -73,13 +73,31 @@ var store = {
     })
   },
   jobsSave: function () {
+    console.info('Saving jobs...')
     this.localStore.save({key: 'jobs', data: this.state.jobs})
   },
+  jobsAdd: function (job) {
+    Vue.set(this.state.jobs, job.id, job)
+    this.jobsSave()
+  },
+  jobsMove: function (job, newId) {
+    console.log('Jobs: move job from ' + job.id + ' to ' + newId)
+    Vue.delete(this.state.jobs, job.id)
+    job.id = newId
+    Vue.set(this.state.jobs, job.id, job)
+    this.jobsSave()
+  },
+  jobsRemove: function (jobId) {
+    console.log('Jobs: remove jobId ' + jobId)
+    Vue.delete(this.state.jobs, jobId)
+    this.jobsSave()
+  },
   queueSave: function () {
+    console.info('Saving queue...')
     this.localStore.save({key: 'queue', data: this.state.queue})
   },
-  queueSetRunning: function () {
-    this.state.queue.running = true
+  queueSetRunning: function (running) {
+    this.state.queue.running = running
   },
   queueJobsEmpty: function () {
     return this.state.queue.jobs.length === 0
@@ -91,8 +109,22 @@ var store = {
     this.state.queue.jobs.push(job)
     this.queueSave()
   },
-  queueAddFoto: function (photo) {
+  queueRemoveJob: function (jobId) {
+    console.log('remove jobId ' + jobId)
+    console.log(this.state.queue.jobs)
+    Vue._.remove(this.state.queue.jobs, function (n) {
+      return n.id === jobId
+    })
+    this.queueSave()
+  },
+  queueAddPhoto: function (photo) {
     this.state.queue.photos.push(photo)
+    this.queueSave()
+  },
+  queueRemovePhoto: function (photoId) {
+    Vue._.remove(this.state.queue.photos, function (n) {
+      return n.id === photoId
+    })
     this.queueSave()
   }
 }

@@ -233,6 +233,7 @@ export default {
         vm.model.uuid = vm.$moment().valueOf()
         vm.model.id = -vm.model.uuid
 
+        Vue.store.jobsAdd(vm.model)
         Vue.store.queueAddJob(vm.model)
 
         // automatically select contract if there is only one option
@@ -310,7 +311,6 @@ export default {
     },
     modelChanged: Vue._.debounce(function () {
       console.log('Model has changed!!!')
-      Vue.set(this.sharedState.jobs, this.model.id, this.model)
       try {
         Vue.store.jobsSave()
         console.log('localStorage used: ' + JSON.stringify(localStorage).length / 1024 + ' KB')

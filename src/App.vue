@@ -255,6 +255,10 @@ export default {
         console.log('saved queue')
         console.log(queue)
         if (queue) {
+          queue.data.jobs.forEach(queuedJob => {
+            let job = self.sharedState.jobs[queuedJob.id]
+            self.sharedState.queue.jobs.push(job)
+          })
           queue.data.photos.forEach(photo => {
             let cachedPhoto = photoCache[photo.id]
             if (cachedPhoto) {
@@ -316,16 +320,13 @@ export default {
           console.debug(response)
           let data = response.data
 
-          job.id = data.id
-          console.error('Save jobs...')
-          // Vue.store.localStore.save({key: 'jobs', data: self.sharedState.jobs})
-
-          console.error('Remove from queue')
-          // Vue.store.localStore.save({key: 'queue', data: self.sharedState.queue})
-          // self.sharedState.queue.running = false
+          Vue.store.jobsMove(job, data.id)
+          Vue.store.queueRemoveJob(job.id)
+          Vue.store.queueSetRunning(false)
         })
         .catch(function (error) {
           console.log(error)
+          Vue.store.queueSetRunning(false)
         })
     },
     uploadPhoto (photo) {
@@ -360,19 +361,19 @@ export default {
               photo.src = jobphoto.photo
               URL.revokeObjectURL(src)
               console.log('Save jobs...')
-              Vue.store.localStore.save({key: 'jobs', data: self.sharedState.jobs})
+              Vue.store.jobsSave()
             }
             img.onerror = img.onload
             img.src = jobphoto.photo
             console.log('Load ' + img.src)
 
-            Vue._.remove(self.sharedState.queue.photos, photo)
-            Vue.store.localStore.save({key: 'queue', data: self.sharedState.queue})
-            self.sharedState.queue.running = false
+            Vue.store.queueRemovePhoto(photo.id)
+            Vue.store.queueSetRunning(false)
             photoUtil.deleteBlob(src, photo.name)
           })
           .catch(function (error) {
             console.log(error)
+            Vue.store.queueSetRunning(false)
           })
       })
     }
