@@ -67,7 +67,9 @@ var store = {
   stateLoad: function () {
     let self = this
     this.localStore.get('access_token', function (accessToken) {
-      self.state.access_token = accessToken.data
+      if (accessToken) {
+        self.state.access_token = accessToken.data
+      }
     })
   },
   jobsSave: function () {
