@@ -15,10 +15,10 @@
         <img :src="item.src" style="height: auto; width: 100%">
       </q-card-media>
       <q-card-title>
-        <div style="font-size: 16px; line-height: 18px">Foto abans</div>
-        <div style="font-size: 12px; line-height: 14px">Taken on 09/09/2017</div>
+        <div style="font-size: 16px; line-height: 18px">{{ item.description }}</div>
+        <div class="upper" style="font-size: 12px; line-height: 14px">{{ $moment(item.taken_on).format('LLL') }}</div>
         <div slot="right">
-          <q-btn flat small ><q-icon name="edit" /></q-btn>
+          <!-- <q-btn flat small ><q-icon name="edit" /></q-btn> -->
           <q-btn flat small ><q-icon name="delete" /></q-btn>
         </div>
       </q-card-title>
@@ -72,7 +72,14 @@ export default {
   },
   methods: {
     newPhoto (abans) {
-      this.$refs.imageinputresizer.newImage()
+      let photo = {}
+      if (abans) {
+        photo.description = 'Foto abans'
+      }
+      else {
+        photo.description = 'Foto després'
+      }
+      this.$refs.imageinputresizer.newImage(photo)
     },
     cordovaSaveFile (photo) {
       let self = this
@@ -114,7 +121,7 @@ export default {
     imageReady (photo) {
       let now = this.$moment()
       photo.name = now.valueOf() + '.jpg'
-      photo.timestamp = now.format(this.$moment().ISO_8601)
+      photo.taken_on = now.valueOf()
       photo.id = -now.valueOf()
       photo.job_id = this.parentId
 
@@ -127,7 +134,7 @@ export default {
       }
     },
     scrollToPhoto (id) {
-      console.log('scroll start')
+      console.debug('scroll start')
       var options = {
         // container: '#' + id,
         // easing: 'ease-in',
@@ -145,11 +152,14 @@ export default {
 
       // or alternatively inside your components you can use
       this.$scrollTo('#' + id, 500, options)
-      console.log('scroll end')
+      console.debug('scroll end')
     }
   }
 }
 </script>
 
 <style>
+div.upper:first-letter {
+  text-transform: uppercase;
+}
 </style>

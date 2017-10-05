@@ -73,7 +73,9 @@ export default {
             // self.$emit('ready', canvas.toDataURL('image/jpeg'))
             let dataUrl = canvas.toDataURL('image/jpeg')
             blobUtil.dataURLToBlob(dataUrl).then(function (blob) {
-              self.$emit('ready', {blob: blob, base64: dataUrl})
+              self.photo.blob = blob
+              self.photo.base64 = dataUrl
+              self.$emit('ready', self.photo)
             }).catch(function (err) {
               // error
               console.log(err)
@@ -94,7 +96,8 @@ export default {
       ctx.drawImage(img, 0, 0, width, height)
       return canvas
     },
-    newImage () {
+    newImage (photo) {
+      this.photo = photo
       if (navigator && navigator.camera) {
         this.openCamera()
       }
@@ -107,7 +110,9 @@ export default {
       let dataUrl = 'data:image/jpeg;base64,' + uri
       let self = this
       blobUtil.dataURLToBlob(dataUrl).then(function (blob) {
-        self.$emit('ready', {blob: blob, base64: dataUrl})
+        self.photo.blob = blob
+        self.photo.base64 = dataUrl
+        self.$emit('ready', self.photo)
       }).catch(function (err) {
         // error
         console.log(err)

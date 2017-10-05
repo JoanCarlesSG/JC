@@ -141,6 +141,8 @@ export default {
       loading: false,
       showContract: true,
       showLocationOptions: true,
+      needsSave: false,
+      isReady: false,
       model: {
         // uuid: '',
         // contract: '',
@@ -225,8 +227,9 @@ export default {
   beforeRouteEnter (to, from, next) {
     if (to.path === '/form/add') {
       next(vm => {
+        vm.isReady = false
+
         vm.model = {
-          uuid: '',
           contract: '',
           elementType: '',
           location: '',
@@ -234,11 +237,18 @@ export default {
           note: '',
           photos: []
         }
-        vm.model.uuid = vm.$moment().valueOf()
-        vm.model.id = -vm.model.uuid
+        let now = vm.$moment()
+        vm.model.started_on = now.valueOf()
+        console.log(now, vm.model.started_on, 'wooooooop')
+        vm.model.id = -vm.model.started_on
 
         Vue.store.jobsAdd(vm.model)
         Vue.store.queueAddJob(vm.model)
+
+        vm.needsSave = false
+        Vue.nextTick(function () {
+          vm.isReady = true
+        })
 
         // automatically select contract if there is only one option
         if (vm.contractOptions.length === 1) {
@@ -251,6 +261,8 @@ export default {
       // if not found by ID, look in the store
       console.log(to)
       next(vm => {
+        vm.isReady = false
+
         console.log(to.params.id)
         console.log(vm.sharedState.jobs)
         if (vm.sharedState.jobs[to.params.id]) {
@@ -258,6 +270,10 @@ export default {
           if (!vm.model.photos) {
             vm.model.photos = []
           }
+          vm.needsSave = false
+          Vue.nextTick(function () {
+            vm.isReady = true
+          })
         }
         else {
           vm.$router.push('/')
@@ -270,19 +286,21 @@ export default {
     console.log('Params update while in this form is not supported')
   },
   beforeRouteLeave (to, from, next) {
-    console.log('FORM leaveing to: ')
-    console.log(to)
-    console.log('from: ')
-    console.log(from)
-    console.log('this:')
-    console.log(this)
+    console.log('FORM leaveing to: ', to)
+    console.log('from: ', from)
+    console.log('this:', this)
+    console.log('needsSave', this.needsSave)
+    if (this.needsSave) {
+      this.needsSave = false
+      Vue.store.queueAddJob(this.model)
+      Vue.store.jobsSave()
+    }
     next(vm => {
-      console.log('NEXT:')
-      console.log(vm)
+      console.log('NEXT <--------------------')
     })
   },
   created () {
-    console.log('Form created')
+    console.debug('Form created')
   },
   mounted () {
   },
@@ -313,17 +331,25 @@ export default {
     searchSectorClose () {
       this.showLocationOptions = true
     },
-    modelChanged: Vue._.debounce(function () {
-      console.log('Model has changed!!!')
-      try {
-        Vue.store.jobsSave()
-        console.log('localStorage used: ' + JSON.stringify(localStorage).length / 1024 + ' KB')
+    modelChanged: function () {
+      if (this.isReady) {
+        console.log('Model has changed!!!')
+        this.needsSave = true
+        this.modelSave()
       }
-      catch (e) {
-        console.log(e)
-        alert('Not enough space on local storage')
+    },
+    modelSave: Vue._.debounce(function () {
+      if (this.needsSave) {
+        try {
+          Vue.store.jobsSave()
+          console.log('localStorage used: ' + JSON.stringify(localStorage).length / 1024 + ' KB')
+        }
+        catch (e) {
+          console.log(e)
+          alert('Not enough space on local storage')
+        }
+        window.local = Vue.store.localStore
       }
-      window.local = Vue.store.localStore
     }, 5000),
     tancarTasca: function () {
       Vue.set(this.model, 'status', 'done')

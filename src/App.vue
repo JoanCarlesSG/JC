@@ -219,6 +219,7 @@ export default {
       }
     },
     loadStartupData (startup, newJobs) {
+      console.log('startup data: ', startup)
       this.startup = startup
       this.sharedState.contracts = startup.contracts
       this.sharedState.elementTypes = startup.element_types
@@ -264,6 +265,8 @@ export default {
           job.note = remoteJob.note
           job.status = remoteJob.status
 
+          console.log('remotejob photos: ' + remoteJob.photos.length)
+
           remoteJob.photos.forEach(remotePhoto => {
             let photo = photoCache[remotePhoto.id]
             let isNew = false
@@ -275,13 +278,15 @@ export default {
               isNew = true
             }
             photo.src = remotePhoto.photo
+            photo.description = remotePhoto.description
+            photo.taken_on = remotePhoto.taken_on
 
             if (isNew) {
-              job.photos.push()
+              job.photos.push(photo)
             }
           })
 
-          Vue.store.jobsAdd(job)
+          self.sharedState.jobs[job.id] = job
         })
       }
 
@@ -336,39 +341,69 @@ export default {
         timeout: 60000
       }
 
-      var url = Vue.API_ROOT + '/ajgirona/feines_proveidors/api/v1/jobs/'
-
       const data = new FormData()
-      data.append('contract', job.contract)
-      data.append('elementType', job.elementType)
-      data.append('location', job.location)
-      data.append('task', job.task)
-      data.append('note', job.note)
-      if (job.photos.length > 0) {
-        data.append('photos', job.photos)
+      if (job.contract) {
+        data.append('contract', job.contract)
+      }
+      if (job.elementType) {
+        data.append('element_type', job.elementType)
+      }
+      if (job.location) {
+        data.append('element_group', job.location)
+      }
+      if (job.task) {
+        data.append('element_task', job.task)
+      }
+      if (job.note) {
+        data.append('note', job.note)
+      }
+      data.append('status', job.status)
+      if (job.started_on) {
+        data.append('started_on', this.$moment(job.started_on).toISOString())
       }
 
-      this.axios.post(url, data, config)
-        .then(function (response) {
-          console.debug('Response:')
-          console.debug(response)
-          let data = response.data
+      if (job.id > 0) {
+        // Existing job, update
+        let url = Vue.API_ROOT + '/ajgirona/feines_proveidors/api/v1/jobs/' + job.id + '/'
 
-          Vue.store.jobsMove(job, data.id)
-          Vue.store.queueRemoveJob(job.id)
-          job.photos.forEach(photo => {
-            photo.job_id = job.id
+        this.axios.put(url, data, config)
+          .then(function (response) {
+            console.debug('Response:', response)
+
+            Vue.store.queueRemoveJob(job.id)
+            Vue.store.queueSetRunning(false)
           })
-          Vue.store.queueSetRunning(false)
-        })
-        .catch(function (error) {
-          console.log(error)
-          Vue.store.queueSetRunning(false)
-        })
+          .catch(function (error) {
+            console.error(error)
+            Vue.store.queueSetRunning(false)
+          })
+      }
+      else {
+        // Nex job, add
+        let url = Vue.API_ROOT + '/ajgirona/feines_proveidors/api/v1/jobs/'
+
+        this.axios.post(url, data, config)
+          .then(function (response) {
+            console.debug('Response:', response)
+
+            Vue.store.jobsMove(job, response.data.id)
+            Vue.store.queueRemoveJob(job.id)
+            job.photos.forEach(photo => {
+              console.log(photo, 'new job_id', job.id)
+              photo.job_id = job.id
+            })
+            Vue.store.queueSetRunning(false)
+          })
+          .catch(function (error) {
+            console.error(error)
+            Vue.store.queueSetRunning(false)
+          })
+      }
     },
     uploadPhoto (photo) {
       let self = this
       console.log('Uploading photo ... ' + photo.id)
+      console.log(photo)
 
       var config = {
         headers: {'Authorization': 'Bearer '.concat(this.sharedState.access_token)},
@@ -383,8 +418,9 @@ export default {
         console.info('Uploading photo ' + photo.id)
 
         data.append('photo', blob, photo.name)
-        console.error('FIXME: add job id')
         data.append('job', photo.job_id)
+        data.append('description', photo.description)
+        data.append('taken_on', self.$moment(photo.taken_on).toISOString())
         self.axios.post(url, data, config)
           .then(function (response) {
             console.debug('Response:')

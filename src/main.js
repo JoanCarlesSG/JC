@@ -16,6 +16,7 @@ import Vue from 'vue'
 Vue.API_ROOT = 'https://server3.microdisseny.com'
 
 import moment from 'moment'
+import 'moment/locale/ca'
 import VueMomentJS from 'vue-momentjs'
 Vue.use(VueMomentJS, moment)
 
@@ -83,7 +84,7 @@ var store = {
   jobsMove: function (job, newId) {
     console.log('Jobs: move job from ' + job.id + ' to ' + newId)
     Vue.delete(this.state.jobs, job.id)
-    job.id = newId
+    Vue.set(job, 'id', newId)
     Vue.set(this.state.jobs, job.id, job)
     this.jobsSave()
   },
