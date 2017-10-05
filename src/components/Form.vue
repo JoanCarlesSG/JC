@@ -78,9 +78,12 @@
       :min-rows="1"
     />
 
-    <!-- <div style="justify-content: space-between; margin: 40px 0px 5px 0px; text-align: right">
-      <q-btn small color="micro" icon="done" @click="" sytle="margin-left: auto;">Tancar tasca</q-btn>
-    </div> -->
+    <div v-if="model.status != 'done'" style="justify-content: space-between; margin: 40px 0px 5px 0px; text-align: right">
+      <q-btn small color="micro" icon="done" @click="tancarTasca" sytle="margin-left: auto;">Tancar tasca</q-btn>
+    </div>
+    <div v-if="model.status == 'done'" style="justify-content: space-between; margin: 40px 0px 5px 0px; text-align: left">
+      <q-btn small color="micro" icon="create" @click="reobrirTasca" sytle="margin-right: auto;">Reobrir tasca</q-btn>
+    </div>
   </div>
   </q-tab-pane>
 
@@ -215,6 +218,7 @@ export default {
         this.model.task,
         this.model.note,
         this.model.photos,
+        this.model.status,
         new Date())
     }
   },
@@ -320,7 +324,14 @@ export default {
         alert('Not enough space on local storage')
       }
       window.local = Vue.store.localStore
-    }, 5000)
+    }, 5000),
+    tancarTasca: function () {
+      Vue.set(this.model, 'status', 'done')
+      this.$router.push('/')
+    },
+    reobrirTasca: function () {
+      Vue.set(this.model, 'status', 'open')
+    }
   }
 }
 </script>

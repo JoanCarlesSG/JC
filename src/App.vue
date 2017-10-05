@@ -262,6 +262,7 @@ export default {
           job.location = remoteJob.element_group
           job.task = remoteJob.element_task
           job.note = remoteJob.note
+          job.status = remoteJob.status
 
           remoteJob.photos.forEach(remotePhoto => {
             let photo = photoCache[remotePhoto.id]
@@ -282,8 +283,6 @@ export default {
 
           Vue.store.jobsAdd(job)
         })
-
-        // update saved list of jobs
       }
 
       Vue.store.localStore.get('queue', function (queue) {

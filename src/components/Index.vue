@@ -11,44 +11,10 @@
         <q-btn round color="primary" @click="add_job" icon="add"/>
       </q-fixed-position>
 
-      <!-- <q-list no-border striped>
-        <q-list-header>Feines</q-list-header>
-        <q-item to="/form/45">
-            <q-item-side left icon="create" />
-            <q-item-main>
-              <q-item-tile label>Oberta</q-item-tile>
-              <q-item-tile sublabel>Open</q-item-tile>
-            </q-item-main>
-            <q-item-side right icon="keyboard_arrow_right" />
-          </router-link>
-        </q-item>
-
-        <q-item to="/form/46">
-            <q-item-side left icon="hourglass_empty" />
-            <q-item-main>
-              <q-item-tile label>Pending</q-item-tile>
-              <q-item-tile sublabel>Urgent!</q-item-tile>
-            </q-item-main>
-            <q-item-side right icon="keyboard_arrow_right" />
-          </router-link>
-        </q-item>
-
-        <q-item to="/form/47">
-            <q-item-side left icon="check" />
-            <q-item-main>
-              <q-item-tile label>Done</q-item-tile>
-              <q-item-tile sublabel>Completed!</q-item-tile>
-            </q-item-main>
-            <q-item-side right icon="keyboard_arrow_right" />
-          </router-link>
-        </q-item>
-
-      </q-list> -->
-
       <q-list no-border striped>
         <q-list-header>Feines</q-list-header>
         <q-item v-for="item in jobs" :key="item.id" :to="'/form/' + item.id">
-            <q-item-side left icon="create" />
+            <q-item-side left :icon="getItemIcon(item)" />
             <q-item-main>
               <q-item-tile label>{{ getItemLabel(item) }}</q-item-tile>
               <q-item-tile sublabel>{{ getItemSublabel(item) }}</q-item-tile>
@@ -79,6 +45,24 @@ import {
   QFixedPosition
 } from 'quasar'
 
+function compareJobs (a, b) {
+  if (a.status === b.status) {
+    return 0
+  }
+  if (a.status === 'open') {
+    return -1
+  }
+  if (b.status === 'open') {
+    return 1
+  }
+  if (a.status === 'done') {
+    return 1
+  }
+  if (b.status === 'done') {
+    return -1
+  }
+}
+
 export default {
   name: 'index',
   components: {
@@ -105,7 +89,19 @@ export default {
   },
   beforeRouteEnter (to, from, next) {
     next(vm => {
-      vm.jobs = vm.sharedState.jobs
+      Vue.set(vm, 'jobs', [])
+      let jobs = []
+      Vue._.forOwn(vm.sharedState.jobs, function (value, key) {
+        jobs.push(value)
+      })
+
+      Vue.set(vm, 'jobs', jobs.sort(compareJobs))
+    })
+  },
+  beforeRouteUpdate (to, from, next) {
+    next(vm => {
+      Vue.set(vm, 'jobs', [])
+      Vue.set(vm, 'jobs', vm.sharedState.jobs)
     })
   },
   watch: {
@@ -116,7 +112,21 @@ export default {
       this.$router.push('/form/add')
     },
     jobsChanged () {
-      console.log('Jobs changed!')
+      console.warn('Jobs changed!')
+    },
+    getItemIcon (item) {
+      if (item.status === 'open') {
+        return 'create'
+      }
+      else if (item.status === 'done') {
+        return 'check'
+      }
+      else if (item.status === 'pending') {
+        return 'hourglass_empty'
+      }
+      else {
+        return 'create'
+      }
     },
     getItemLabel (item) {
       return this.getLocationText(item.location)
