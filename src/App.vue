@@ -190,7 +190,7 @@ export default {
           .then(response => {
             console.log('startup response ok')
             // JSON responses are automatically parsed.
-            self.loadStartupData(response.data)
+            self.loadStartupData(response.data, true)
 
             console.log(this.startup)
             // Save startup cache
@@ -247,7 +247,35 @@ export default {
       })
 
       if (newJobs) {
+        console.log('-----------------------------------------')
+        console.log(startup)
         console.log('Jobs: ' + newJobs)
+        startup.jobs.forEach(remoteJob => {
+          console.log('remoteJob', remoteJob)
+          let job = self.sharedState.jobs[remoteJob.id]
+          if (job) {
+            console.log('before', job)
+            job.contract = remoteJob.contract
+            job.elementType = remoteJob.element_type
+            job.location = remoteJob.element_group
+            job.task = remoteJob.element_task
+            job.note = remoteJob.note
+
+            remoteJob.photos.forEach(remotePhoto => {
+              let photo = photoCache[remotePhoto.id]
+              if (photo) {
+                photo.src = remotePhoto.photo
+              }
+              else {
+                console.error('photo not found when loading queue')
+                console.error(photo)
+              }
+            })
+
+            console.log('after ', job)
+          }
+        })
+
         // update saved list of jobs
       }
 
@@ -322,6 +350,9 @@ export default {
 
           Vue.store.jobsMove(job, data.id)
           Vue.store.queueRemoveJob(job.id)
+          job.photos.forEach(photo => {
+            photo.job_id = job.id
+          })
           Vue.store.queueSetRunning(false)
         })
         .catch(function (error) {
@@ -347,6 +378,7 @@ export default {
 
         data.append('photo', blob, photo.name)
         console.error('FIXME: add job id')
+        data.append('job', photo.job_id)
         self.axios.post(url, data, config)
           .then(function (response) {
             console.debug('Response:')

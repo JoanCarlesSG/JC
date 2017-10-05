@@ -116,7 +116,7 @@ export default {
       photo.name = now.valueOf() + '.jpg'
       photo.timestamp = now.format(this.$moment().ISO_8601)
       photo.id = -now.valueOf()
-      photo.parentId = this.parentId
+      photo.job_id = this.parentId
 
       // save image to persistent file
       if (navigator && navigator.camera) {
