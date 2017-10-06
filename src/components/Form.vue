@@ -88,7 +88,7 @@
   </q-tab-pane>
 
   <q-tab-pane name="tab-fotos" style="padding: 0px">
-    <photos :parentId='model.id' :photos="model.photos" />
+    <photos :photos="model.photos" @newPhoto="newPhoto" />
   </q-tab-pane>
 
 </q-tabs>
@@ -357,6 +357,10 @@ export default {
     },
     reobrirTasca: function () {
       Vue.set(this.model, 'status', 'open')
+    },
+    newPhoto: function (photo) {
+      photo.job_id = this.model.id
+      Vue.store.queueAddPhoto(photo)
     }
   }
 }

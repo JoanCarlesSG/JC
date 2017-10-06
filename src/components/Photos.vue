@@ -50,7 +50,6 @@ import ImageInputResizer from './ImageInputResizer.vue'
 
 export default {
   props: {
-    parentId: Number,
     photos: Array
   },
   components: {
@@ -111,7 +110,7 @@ export default {
     },
     photoSaved (photo) {
       this.photos.push(photo)
-      Vue.store.queueAddPhoto(photo)
+      this.$emit('newPhoto', photo)
 
       let self = this
       Vue.nextTick(function () {
@@ -123,7 +122,6 @@ export default {
       photo.name = now.valueOf() + '.jpg'
       photo.taken_on = now.valueOf()
       photo.id = -now.valueOf()
-      photo.job_id = this.parentId
 
       // save image to persistent file
       if (navigator && navigator.camera) {
