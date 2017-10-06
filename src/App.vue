@@ -334,7 +334,9 @@ export default {
       }
     },
     uploadJob (job) {
+      let self = this
       console.log('Uploading job ... ' + job.id)
+      Vue.set(this.sharedState.queue, 'uploading', job)
 
       var config = {
         headers: {'Authorization': 'Bearer '.concat(this.sharedState.access_token)},
@@ -372,6 +374,7 @@ export default {
 
             Vue.store.queueRemoveJob(job.id)
             Vue.store.queueSetRunning(false)
+            self.queueCheck()
           })
           .catch(function (error) {
             console.error(error)
@@ -403,6 +406,7 @@ export default {
     uploadPhoto (photo) {
       let self = this
       console.log('Uploading photo ... ' + photo.id)
+      Vue.set(this.sharedState.queue, 'uploading', photo)
       console.log(photo)
 
       var config = {
@@ -424,6 +428,7 @@ export default {
           console.log(photo)
           Vue.store.queueRemovePhoto(photo.id)
           Vue.store.queueSetRunning(false)
+          this.queueCheck()
         }
         else {
           console.error('Update photo not implemented')
@@ -439,6 +444,7 @@ export default {
           photoUtil.deleteBlob(photo.src, photo.name)
           URL.revokeObjectURL(photo.src)
           Vue.store.queueSetRunning(false)
+          this.queueCheck()
           return
         }
         photoUtil.getBlob(photo, function (blob) {
@@ -467,6 +473,7 @@ export default {
 
               Vue.store.queueRemovePhoto(photo.id)
               Vue.store.queueSetRunning(false)
+              self.queueCheck()
               photoUtil.deleteBlob(src, photo.name)
             })
             .catch(function (error) {

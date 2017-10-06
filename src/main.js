@@ -47,6 +47,8 @@ import 'quasar-extras/material-icons'
 // import 'quasar-extras/animate'
 import 'quasar-extras/animate/fadeIn.css'
 import 'quasar-extras/animate/fadeOut.css'
+import 'quasar-extras/animate/slideInDown.css'
+import 'quasar-extras/animate/slideOutUp.css'
 
 import Lawnchair from 'lawnchair'
 
@@ -58,7 +60,8 @@ var store = {
       running: false,
       jobs: [],
       photos: []
-    }
+    },
+    version: 0
   },
   localStore: new Lawnchair(),
 
@@ -99,6 +102,7 @@ var store = {
   },
   queueSetRunning: function (running) {
     this.state.queue.running = running
+    this.state.version += 1
   },
   queueJobsEmpty: function () {
     return this.state.queue.jobs.length === 0
