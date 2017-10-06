@@ -10,7 +10,7 @@
       <q-btn color="micro" icon="photo" @click="newPhoto(false)" sytle="margin-left: auto;">Foto després</q-btn>
     </div>
 
-    <q-card inline v-for="item in photos" :key="item.id" :id="'photo_' + item.id">
+    <q-card inline v-if="displayPhoto(item)" v-for="item in photos" :key="item.id" :id="'photo_' + item.id">
       <q-card-media>
         <img :src="item.src" style="height: auto; width: 100%">
       </q-card-media>
@@ -19,7 +19,7 @@
         <div class="upper" style="font-size: 12px; line-height: 14px">{{ $moment(item.taken_on).format('LLL') }}</div>
         <div slot="right">
           <!-- <q-btn flat small ><q-icon name="edit" /></q-btn> -->
-          <q-btn flat small ><q-icon name="delete" /></q-btn>
+          <q-btn flat small @click="deletePhoto(item)" ><q-icon name="delete" /></q-btn>
         </div>
       </q-card-title>
     </q-card>
@@ -43,7 +43,8 @@ import {
   QCardTitle,
   QCardSeparator,
   QCardMain,
-  QIcon
+  QIcon,
+  Dialog
 } from 'quasar'
 
 import ImageInputResizer from './ImageInputResizer.vue'
@@ -79,6 +80,31 @@ export default {
         photo.description = 'Foto després'
       }
       this.$refs.imageinputresizer.newImage(photo)
+    },
+    deletePhoto (photo) {
+      let self = this
+      Dialog.create({
+        title: 'Atenció!',
+        message: 'Esteu segurs que voleu esborrar aquesta fotografia',
+        buttons: [
+          'No',
+          {
+            label: 'Sí, esborrar',
+            handler () {
+              Vue._.remove(self.photos, function (n) {
+                return n.id === photo.id
+              })
+              self.$emit('deletePhoto', photo)
+            }
+          }
+        ]
+      })
+    },
+    displayPhoto (photo) {
+      if (photo._delete) {
+        return false
+      }
+      return true
     },
     cordovaSaveFile (photo) {
       let self = this

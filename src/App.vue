@@ -379,7 +379,7 @@ export default {
           })
       }
       else {
-        // Nex job, add
+        // New job, add
         let url = Vue.API_ROOT + '/ajgirona/feines_proveidors/api/v1/jobs/'
 
         this.axios.post(url, data, config)
@@ -412,44 +412,69 @@ export default {
 
       var url = Vue.API_ROOT + '/ajgirona/feines_proveidors/api/v1/jobphotos/'
       const data = new FormData()
+      data.append('job', photo.job_id)
+      data.append('description', photo.description)
+      data.append('taken_on', self.$moment(photo.taken_on).toISOString())
       console.log(photo)
 
-      photoUtil.getBlob(photo, function (blob) {
-        console.info('Uploading photo ' + photo.id)
+      if (photo.id > 0) {
+        // Existing job
+        if (photo._delete) {
+          console.log('DELETE PHOTO')
+          console.log(photo)
+          Vue.store.queueRemovePhoto(photo.id)
+          Vue.store.queueSetRunning(false)
+        }
+        else {
+          console.error('Update photo not implemented')
+          Vue.store.queueRemovePhoto(photo.id)
+          Vue.store.queueSetRunning(false)
+        }
+      }
+      else {
+        // New photo, add
+        if (photo._delete) {
+          console.info('Photo deleted before upload', photo)
+          Vue.store.queueRemovePhoto(photo.id)
+          photoUtil.deleteBlob(photo.src, photo.name)
+          URL.revokeObjectURL(photo.src)
+          Vue.store.queueSetRunning(false)
+          return
+        }
+        photoUtil.getBlob(photo, function (blob) {
+          console.info('Uploading photo ' + photo.id)
 
-        data.append('photo', blob, photo.name)
-        data.append('job', photo.job_id)
-        data.append('description', photo.description)
-        data.append('taken_on', self.$moment(photo.taken_on).toISOString())
-        self.axios.post(url, data, config)
-          .then(function (response) {
-            console.debug('Response:')
-            console.debug(response)
-            let jobphoto = response.data
-            let src = photo.src
-            photo.id = jobphoto.id
+          data.append('photo', blob, photo.name)
+          self.axios.post(url, data, config)
+            .then(function (response) {
+              console.debug('Response:')
+              console.debug(response)
+              let jobphoto = response.data
+              let src = photo.src
+              photo.id = jobphoto.id
 
-            var img = new Image()
-            img.onload = function () {
-              console.log('Use remote image')
-              photo.src = jobphoto.photo
-              URL.revokeObjectURL(src)
-              console.log('Save jobs...')
-              Vue.store.jobsSave()
-            }
-            img.onerror = img.onload
-            img.src = jobphoto.photo
-            console.log('Load ' + img.src)
+              var img = new Image()
+              img.onload = function () {
+                console.log('Use remote image')
+                photo.src = jobphoto.photo
+                URL.revokeObjectURL(src)
+                console.log('Save jobs...')
+                Vue.store.jobsSave()
+              }
+              img.onerror = img.onload
+              img.src = jobphoto.photo
+              console.log('Load ' + img.src)
 
-            Vue.store.queueRemovePhoto(photo.id)
-            Vue.store.queueSetRunning(false)
-            photoUtil.deleteBlob(src, photo.name)
-          })
-          .catch(function (error) {
-            console.log(error)
-            Vue.store.queueSetRunning(false)
-          })
-      })
+              Vue.store.queueRemovePhoto(photo.id)
+              Vue.store.queueSetRunning(false)
+              photoUtil.deleteBlob(src, photo.name)
+            })
+            .catch(function (error) {
+              console.log(error)
+              Vue.store.queueSetRunning(false)
+            })
+        })
+      }
     }
   }
 }

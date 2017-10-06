@@ -88,7 +88,7 @@
   </q-tab-pane>
 
   <q-tab-pane name="tab-fotos" style="padding: 0px">
-    <photos :photos="model.photos" @newPhoto="newPhoto" />
+    <photos :photos="model.photos" @newPhoto="newPhoto" @deletePhoto="deletePhoto" />
   </q-tab-pane>
 
 </q-tabs>
@@ -333,7 +333,7 @@ export default {
     },
     modelChanged: function () {
       if (this.isReady) {
-        console.log('Model has changed!!!')
+        console.debug('Model has changed!!!')
         this.needsSave = true
         this.modelSave()
       }
@@ -360,6 +360,12 @@ export default {
     },
     newPhoto: function (photo) {
       photo.job_id = this.model.id
+      Vue.store.jobsSave()
+      Vue.store.queueAddPhoto(photo)
+    },
+    deletePhoto: function (photo) {
+      Vue.set(photo, '_delete', true)
+      Vue.store.jobsSave()
       Vue.store.queueAddPhoto(photo)
     }
   }
