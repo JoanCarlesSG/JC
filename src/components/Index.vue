@@ -5,7 +5,17 @@
       if using subRoutes
     -->
     <div class="layout-view">
-      <div class="data-sync">Sincronitzant dades (foto 1 de 3)</div>
+      <div class="data-sync"
+        >Sincronitzant dades
+        <div style="display: flex; flex-direction: row-reverse; flex-wrap: wrap">
+          <q-transition group enter="fadeIn" leave="fadeOut">
+            <div v-for="item in this.sharedState.queue.photos" :key="item.id"
+                  style="margin: 8px 0 0 10px; float: left"
+              ><img :src="item.src" style="height: 40px" />
+            </div>
+          </q-transition>
+        </div>
+      </div>
 
       <q-fixed-position corner="bottom-right" :offset="[18, 18]" style="z-index: 500">
         <q-btn round color="primary" @click="add_job" icon="add"/>
@@ -42,7 +52,8 @@ import {
   QItemSide,
   QItemMain,
   QItemTile,
-  QFixedPosition
+  QFixedPosition,
+  QTransition
 } from 'quasar'
 
 function compareJobs (a, b) {
@@ -77,7 +88,8 @@ export default {
     QItemSide,
     QItemMain,
     QItemTile,
-    QFixedPosition
+    QFixedPosition,
+    QTransition
   },
   data () {
     return {
