@@ -227,6 +227,12 @@ export default {
   beforeRouteEnter (to, from, next) {
     if (to.path === '/form/add') {
       next(vm => {
+        if (vm.sharedState.contracts.length === 0) {
+          console.warn('No contracts, redirecting to Index')
+          vm.$router.push('/')
+          return
+        }
+
         vm.isReady = false
 
         vm.model = {
@@ -261,6 +267,13 @@ export default {
       // if not found by ID, look in the store
       console.log(to)
       next(vm => {
+        console.log(vm.sharedState.contracts)
+        if (vm.sharedState.contracts.length === 0) {
+          console.warn('No contracts, redirecting to Index')
+          vm.$router.push('/')
+          return
+        }
+
         vm.isReady = false
 
         console.log(to.params.id)
@@ -276,6 +289,7 @@ export default {
           })
         }
         else {
+          console.error('Job not found', to.params)
           vm.$router.push('/')
           // throw 'not found'
         }

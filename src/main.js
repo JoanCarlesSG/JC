@@ -61,7 +61,12 @@ var store = {
       jobs: [],
       photos: []
     },
-    version: 0
+    version: 0,
+    contracts: [],
+    elementTypes: [],
+    elementGroups: [],
+    elementTasks: []
+
   },
   localStore: new Lawnchair(),
 
