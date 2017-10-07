@@ -17,7 +17,7 @@
     "lodash": "^4.17.4",
     "moment": "^2.18.1",
     "quasar-extras": "0.x",
-    "quasar-framework": "^0.14.1",
+    "quasar-framework": "^0.14.4",
     "vue": "~2.3.4",
     "vue-animate": "0.0.4",
     "vue-auth": "^1.0.0-alpha.1",
