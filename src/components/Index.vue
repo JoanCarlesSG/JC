@@ -1,37 +1,6 @@
 <template>
   <div class="layout-view">
-    <!-- <q-transition enter="slideInDown" leave="slideOutUp"> -->
-    <q-slide-transition>
-      <div v-if="needsSync" class="data-sync"
-        >Sincronitzant dades
-        <div class="sync-container">
-          <q-transition group enter="fadeIn" leave="fadeOut">
-            <div v-for="(item, index) in queuedPhotos" :key="item.id"
-                :class="{'sync-item': true}"
-              >
-              <img :src="item.src" style="height: 40px" />
-              <q-transition enter="fadeIn" leave="fadeOut">
-                <div class="spin" v-if="sharedState.queue.running && (sharedState.queue.uploading == item)"
-                  ><q-icon name="sync" class="animate-spin-reverse"
-                        /></div>
-              </q-transition>
-            </div>
-            <div v-for="item in queuedJobs" :key="item.id"
-                class='sync-item' style="margin: 8px 0 0 10px; text-align: center"
-              >
-              <div style="height: 40px">Sector<br/>{{ getItemLabel(item) }}</div>
-              <q-transition enter="fadeIn" leave="fadeOut">
-                <div class="spin" v-if="sharedState.queue.running && (sharedState.queue.uploading == item)"
-                  ><q-icon name="sync" class="animate-spin-reverse"
-                        /></div>
-              </q-transition>
-            </div>
-          </q-transition>
-        </div>
-      </div>
-    <!-- </q-transition> -->
-  </q-slide-transition>
-
+    <sync />
       <q-fixed-position corner="bottom-right" :offset="[18, 18]" style="z-index: 500">
         <q-btn round color="primary" @click="add_job" icon="add"/>
       </q-fixed-position>
@@ -75,10 +44,11 @@ import {
   QItemMain,
   QItemTile,
   QFixedPosition,
-  QSlideTransition,
   QTransition,
   QAlert
 } from 'quasar'
+
+import Sync from './Sync.vue'
 
 function compareJobs (a, b) {
   if (a.status === b.status) {
@@ -113,9 +83,9 @@ export default {
     QItemMain,
     QItemTile,
     QFixedPosition,
-    QSlideTransition,
     QTransition,
-    QAlert
+    QAlert,
+    Sync
   },
   data () {
     return {
@@ -124,26 +94,6 @@ export default {
     }
   },
   computed: {
-    needsSync: function () {
-      if (this.sharedState.version < 0) {
-        return true
-      }
-      return this.sharedState.queue.jobs.length > 0 ||
-             this.sharedState.queue.photos.length > 0 ||
-             this.sharedState.queue.running
-    },
-    queuedJobs: function () {
-      if (this.sharedState.version < 0) {
-        return true
-      }
-      return this.sharedState.queue.jobs.slice().reverse()
-    },
-    queuedPhotos: function () {
-      if (this.sharedState.version < 0) {
-        return true
-      }
-      return this.sharedState.queue.photos.slice().reverse()
-    }
   },
   beforeRouteEnter (to, from, next) {
     next(vm => {
@@ -258,23 +208,4 @@ export default {
 .logo
   position absolute
   transform-style preserve-3d
-
-.sync-container span {
-  display: flex
-  flex-direction: row-reverse
-  flex-wrap: wrap
-}
-
-.sync-item {
-  margin: 8px 0 0 10px
-  height: 40px
-}
-
-div.spin {
-  color: white
-  text-align: center
-  font-size: 36px
-  position: relative
-  top: -47px
-}
 </style>
