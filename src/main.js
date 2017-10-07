@@ -109,6 +109,9 @@ var store = {
     this.state.queue.running = running
     this.state.version += 1
   },
+  queueIsEmpty: function () {
+    return this.queueJobsEmpty() && this.queuePhotosEmpty()
+  },
   queueJobsEmpty: function () {
     return this.state.queue.jobs.length === 0
   },
@@ -126,6 +129,9 @@ var store = {
       return n.id === jobId
     })
     this.queueSave()
+  },
+  queuePhotosEmpty: function () {
+    return this.state.queue.photos.length === 0
   },
   queueAddPhoto: function (photo) {
     this.state.queue.photos.push(photo)

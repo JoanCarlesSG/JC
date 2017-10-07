@@ -141,13 +141,11 @@ export default {
   methods: {
     logout () {
       console.log('woooop')
-      this.$refs.layout.hideCurrentSide()
-      // this.$refs.layout.hideRight()
       this.$router.push('/logout')
+      this.$refs.layout.hideCurrentSide()
     },
     routeChanged () {
       let self = this
-      this.$refs.layout.hideRight()
       console.log(this.$route.path)
 
       // if (this.$route.path === '/') {
@@ -164,7 +162,6 @@ export default {
         console.log('CLOSE')
         // make sure dialog will appear
         this.loading = false
-        return
       }
 
       console.log('Auth ok?')
