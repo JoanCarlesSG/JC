@@ -36,6 +36,13 @@
 
       <q-list no-border striped>
         <q-list-header>Feines</q-list-header>
+        <q-alert
+          v-if="jobs.length === 0"
+          icon="info"
+          color="positive"
+          style="margin: 0 15px"
+        >Per afegir una feina, feu servir el botó situat a la part inferior dreta de la pantalla
+        </q-alert>
         <q-item v-for="item in jobs" :key="item.id" :to="'/form/' + item.id">
             <q-item-side left :icon="getItemIcon(item)" />
             <q-item-main>
@@ -66,7 +73,8 @@ import {
   QItemMain,
   QItemTile,
   QFixedPosition,
-  QTransition
+  QTransition,
+  QAlert
 } from 'quasar'
 
 function compareJobs (a, b) {
@@ -102,7 +110,8 @@ export default {
     QItemMain,
     QItemTile,
     QFixedPosition,
-    QTransition
+    QTransition,
+    QAlert
   },
   data () {
     return {
