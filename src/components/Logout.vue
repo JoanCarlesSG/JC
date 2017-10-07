@@ -79,7 +79,7 @@ export default {
       data.append('token', this.sharedState.access_token)
       data.append('client_id', 'HrBnfIV54e82dwIeo2heqY4QvJTy0gX56yMpJ5wE')
       this.sharedState.access_token = null
-      localStorage.removeItem('access_token')
+      Vue.store.localStore.nuke()
 
       var self = this
       this.axios.post(url, data)
