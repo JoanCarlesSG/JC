@@ -1,6 +1,7 @@
 <template>
   <div class="layout-view">
-    <q-transition enter="slideInDown" leave="slideOutUp">
+    <!-- <q-transition enter="slideInDown" leave="slideOutUp"> -->
+    <q-slide-transition>
       <div v-if="needsSync" class="data-sync"
         >Sincronitzant dades
         <div class="sync-container">
@@ -28,7 +29,8 @@
           </q-transition>
         </div>
       </div>
-    </q-transition>
+    <!-- </q-transition> -->
+  </q-slide-transition>
 
       <q-fixed-position corner="bottom-right" :offset="[18, 18]" style="z-index: 500">
         <q-btn round color="primary" @click="add_job" icon="add"/>
@@ -73,6 +75,7 @@ import {
   QItemMain,
   QItemTile,
   QFixedPosition,
+  QSlideTransition,
   QTransition,
   QAlert
 } from 'quasar'
@@ -110,6 +113,7 @@ export default {
     QItemMain,
     QItemTile,
     QFixedPosition,
+    QSlideTransition,
     QTransition,
     QAlert
   },
