@@ -121,6 +121,8 @@ export default {
     },
     jobsChanged () {
       console.warn('Jobs changed!')
+      Vue.set(this, 'jobs', [])
+      Vue.set(this, 'jobs', this.sharedState.jobs)
     },
     getItemIcon (item) {
       if (item.status === 'open') {
