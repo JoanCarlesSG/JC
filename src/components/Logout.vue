@@ -79,6 +79,21 @@ export default {
       data.append('token', this.sharedState.access_token)
       data.append('client_id', 'HrBnfIV54e82dwIeo2heqY4QvJTy0gX56yMpJ5wE')
       this.sharedState.access_token = null
+      this.sharedState = {
+        access_token: '',
+        jobs: {},
+        queue: {
+          running: false,
+          jobs: [],
+          photos: []
+        },
+        version: 0,
+        contracts: [],
+        elementTypes: [],
+        elementGroups: [],
+        elementTasks: []
+      }
+
       Vue.store.localStore.nuke()
 
       var self = this
