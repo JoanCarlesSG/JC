@@ -6,7 +6,7 @@
   </div>
 
   <div v-if="!loading">
-<q-tabs no-pane-border>
+<q-tabs no-pane-border v-model="selectedTab">
   <q-tab default slot="title" name="tab-fitxa" icon="assignment" />
   <q-tab slot="title" name="tab-fotos" icon="photo" />
   <!-- <q-tab slot="title" name="tab-sector" icon="map" /> -->
@@ -139,6 +139,7 @@ export default {
   data () {
     return {
       loading: false,
+      selectedTab: 'tab-fitxa',
       showContract: true,
       showLocationOptions: true,
       needsSave: false,
@@ -252,6 +253,7 @@ export default {
         Vue.store.queueAddJob(vm.model)
 
         vm.needsSave = false
+        vm.selectedTab = 'tab-fitxa'
         Vue.nextTick(function () {
           vm.isReady = true
         })
@@ -284,6 +286,7 @@ export default {
             vm.model.photos = []
           }
           vm.needsSave = false
+          vm.selectedTab = 'tab-fitxa'
           Vue.nextTick(function () {
             vm.isReady = true
           })
