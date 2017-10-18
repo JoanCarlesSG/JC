@@ -414,19 +414,19 @@ export default {
           this.model.elementType &&
           this.model.location &&
           this.model.task) {
-            if (fotoAbans && fotoDespres) {
-              Vue.set(this.model, 'status', 'done')
-              this.$router.push('/')
-            }
-            else {
-              Dialog.create({
-                title: 'Atenció!',
-                message: 'Cal una fotografia abans i una fotografia després',
-                buttons: [
-                  'D\'acord'
-                ]
-              })
-            }
+        if (fotoAbans && fotoDespres) {
+          Vue.set(this.model, 'status', 'done')
+          this.$router.push('/')
+        }
+        else {
+          Dialog.create({
+            title: 'Atenció!',
+            message: 'Cal una fotografia abans i una fotografia després',
+            buttons: [
+              'D\'acord'
+            ]
+          })
+        }
       }
       else {
         Dialog.create({
