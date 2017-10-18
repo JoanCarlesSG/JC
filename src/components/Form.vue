@@ -113,7 +113,8 @@ import {
   QCardTitle,
   QCardSeparator,
   QCardMain,
-  QIcon
+  QIcon,
+  Dialog
 } from 'quasar'
 
 import Photos from './Photos.vue'
@@ -406,8 +407,36 @@ export default {
       }
     }, 5000),
     tancarTasca: function () {
-      Vue.set(this.model, 'status', 'done')
-      this.$router.push('/')
+      var fotoAbans = this.model.photos.some(f => f.type === 'abans')
+      var fotoDespres = this.model.photos.some(f => f.type === 'despres')
+
+      if (this.model.contract &&
+          this.model.elementType &&
+          this.model.location &&
+          this.model.task) {
+            if (fotoAbans && fotoDespres) {
+              Vue.set(this.model, 'status', 'done')
+              this.$router.push('/')
+            }
+            else {
+              Dialog.create({
+                title: 'Atenció!',
+                message: 'Cal una fotografia abans i una fotografia després',
+                buttons: [
+                  'D\'acord'
+                ]
+              })
+            }
+      }
+      else {
+        Dialog.create({
+          title: 'Atenció!',
+          message: 'Cal que completeu el formulari abans de tancar la tasca',
+          buttons: [
+            'D\'acord'
+          ]
+        })
+      }
     },
     reobrirTasca: function () {
       Vue.set(this.model, 'status', 'open')
