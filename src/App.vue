@@ -28,7 +28,7 @@
         -->
 
         <q-list no-border link inset-delimiter>
-          <q-list-header>manelclos@gmail.com</q-list-header>
+          <q-list-header>{{ sharedState.username }}</q-list-header>
           <q-item @click="logout">
             <q-item-side icon="exit_to_app" />
             <q-item-main label="Tancar sessió" />
@@ -218,6 +218,7 @@ export default {
     loadStartupData (startup, newJobs) {
       console.log('startup data: ', startup)
       this.startup = startup
+      this.sharedState.username = startup.username
       this.sharedState.contracts = startup.contracts
       this.sharedState.elementTypes = startup.element_types
       this.sharedState.elementGroups = startup.element_groups
