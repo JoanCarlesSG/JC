@@ -75,9 +75,11 @@ export default {
       let photo = {}
       if (abans) {
         photo.description = 'Foto abans'
+        photo.type = 'abans'
       }
       else {
         photo.description = 'Foto després'
+        photo.type = 'despres'
       }
       this.$refs.imageinputresizer.newImage(photo)
     },

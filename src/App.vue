@@ -278,6 +278,7 @@ export default {
             photo.src = remotePhoto.photo
             photo.description = remotePhoto.description
             photo.taken_on = remotePhoto.taken_on
+            photo.type = remotePhoto.photo_type
 
             if (isNew) {
               job.photos.push(photo)
@@ -417,6 +418,7 @@ export default {
       data.append('job', photo.job_id)
       data.append('description', photo.description)
       data.append('taken_on', self.$moment(photo.taken_on).toISOString())
+      data.append('photo_type', photo.type)
       console.log(photo)
 
       if (photo.id > 0) {
