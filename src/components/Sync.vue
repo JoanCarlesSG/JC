@@ -80,15 +80,19 @@ export default {
     },
     getLocationText (id) {
       // TODO: refactor getLocationText into Vue.store ...
-      let list = this.sharedState.elementGroups.filter(item => {
-        return (item.id === id)
+      var text = ''
+      Vue._.forEach(this.sharedState.contracts, function (value, key, collection) {
+        let list = value.groups.filter(item => {
+          // console.log('item.id', item.id)
+          return (item.id === id)
+        })
+        if (list.length === 1) {
+          text = list[0].name
+          return false
+        }
+        return true
       })
-      if (list.length === 1) {
-        return list[0].name
-      }
-      else {
-        return ''
-      }
+      return text
     }
   }
 }

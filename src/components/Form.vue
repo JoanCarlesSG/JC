@@ -20,12 +20,6 @@
      :options="contractOptions"
     />
 
-    <q-select
-      v-model="model.elementType"
-      float-label="Tipus d'element"
-     :options="elementTypeOptions"
-    />
-
 <!-- real Sector selector -->
 <div style="display: flex; align-items: center"
      v-show="showLocationOptions">
@@ -62,6 +56,12 @@
     <q-btn color="grey" icon="close" @click="searchSectorClose" style="display: none"/>
     <q-btn flat small @click="searchSectorClose" ><q-icon name="close" /></q-btn>
 </div>
+
+    <q-select
+    v-model="model.elementType"
+    float-label="Tipus d'element"
+    :options="elementTypeOptions"
+    />
 
     <q-select
       ref="tascaSelect"
@@ -177,22 +177,49 @@ export default {
       return options
     },
     elementTypeOptions: function () {
+      var self = this
       var options = []
+      var group
+
+      if (!this.model.location) {
+        return options
+      }
+
+      this.sharedState.contracts.forEach(function (contract) {
+        if (contract.id === self.model.contract) {
+          contract.groups.forEach(function (element) {
+            if (element.id === self.model.location) {
+              group = element
+            }
+          })
+        }
+      })
+
+      if (!this.model.location) {
+        return options
+      }
+
       this.sharedState.elementTypes.forEach(function (element) {
         // console.log(element)
-        options.push({label: element.name, value: element.id})
+        if (group.types.includes(element.id)) {
+          options.push({label: element.name, value: element.id})
+        }
       })
       return options
     },
     elementGroupsOptions: function () {
       var options = []
       var self = this
-      if (!this.model.elementType) {
+      if (!this.model.contract) {
         return options
       }
-      this.sharedState.elementGroups.forEach(function (element) {
-        if (element.types.includes(self.model.elementType)) {
-          options.push({label: element.name, value: element.id})
+      this.sharedState.contracts.forEach(function (contract) {
+        if (contract.id === self.model.contract) {
+          contract.groups.forEach(function (element) {
+            // if (element.types.includes(self.model.elementType)) {
+            options.push({label: element.name, value: element.id})
+            // }
+          })
         }
       })
       return options
@@ -322,7 +349,8 @@ export default {
   mounted () {
   },
   watch: {
-    'modelData': 'modelChanged'
+    'modelData': 'modelChanged',
+    'model.location': 'modelLocationChanged'
   },
   methods: {
     includes (terms, {field, list}) {
@@ -353,6 +381,15 @@ export default {
         console.debug('Model has changed!!!')
         this.needsSave = true
         this.modelSave()
+      }
+    },
+    modelLocationChanged: function () {
+      // automatically select element type if there is only one option
+      if (this.elementTypeOptions.length === 1) {
+        this.model.elementType = this.elementTypeOptions[0].value
+      }
+      else {
+        this.model.elementType = 0
       }
     },
     modelSave: Vue._.debounce(function () {
