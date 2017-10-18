@@ -109,7 +109,12 @@ export default {
   beforeRouteUpdate (to, from, next) {
     next(vm => {
       Vue.set(vm, 'jobs', [])
-      Vue.set(vm, 'jobs', vm.sharedState.jobs)
+      let jobs = []
+      Vue._.forOwn(vm.sharedState.jobs, function (value, key) {
+        jobs.push(value)
+      })
+
+      Vue.set(vm, 'jobs', jobs.sort(compareJobs))
     })
   },
   watch: {
