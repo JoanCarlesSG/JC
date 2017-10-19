@@ -264,6 +264,7 @@ export default {
           job.task = remoteJob.element_task
           job.note = remoteJob.note
           job.status = remoteJob.status
+          job.started_on = remoteJob.started_on
 
           console.log('remotejob photos: ' + remoteJob.photos.length)
 
