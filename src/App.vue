@@ -189,27 +189,27 @@ export default {
             // JSON responses are automatically parsed.
             self.loadStartupData(response.data, true)
 
-            console.log(this.startup)
+            console.log(self.startup)
             // Save startup cache
-            Vue.store.localStore.save({key: 'startup', data: this.startup})
+            Vue.store.localStore.save({key: 'startup', data: self.startup})
             console.log('startup cache saved')
-            this.loading = false
+            self.loading = false
           })
           .catch(e => {
             console.log(e)
             if (e.request.status === 403) {
-              this.loading = false
-              this.$router.push('/login')
+              self.loading = false
+              self.$router.push('/login')
             }
             else {
               console.log('startup response ERROR')
-              this.errors.push(e)
-              console.log(this.errors)
-              this.loading = false
+              self.errors.push(e)
+              console.log(self.errors)
+              self.loading = false
               Vue.store.localStore.get('startup', function (me) {
                 console.log('startup cache')
                 self.loadStartupData(me.data)
-                this.loading = false
+                self.loading = false
               })
             }
           })
