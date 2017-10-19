@@ -408,6 +408,7 @@ export default {
       }
     }, 5000),
     tancarTasca: function () {
+      let self = this
       var fotoAbans = this.model.photos.some(f => f.type === 'abans')
       var fotoDespres = this.model.photos.some(f => f.type === 'despres')
 
@@ -417,7 +418,9 @@ export default {
           this.model.task) {
         if (fotoAbans && fotoDespres) {
           Vue.set(this.model, 'status', 'done')
-          this.$router.push('/')
+          Vue.nextTick(function () {
+            self.$router.push('/')
+          })
         }
         else {
           Dialog.create({
