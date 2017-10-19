@@ -9,7 +9,7 @@
 <q-tabs no-pane-border v-model="selectedTab">
   <q-tab default slot="title" name="tab-fitxa" icon="assignment" />
   <q-tab slot="title" name="tab-fotos" icon="photo" />
-  <!-- <q-tab slot="title" name="tab-sector" icon="map" /> -->
+  <q-tab slot="title" name="tab-sector" icon="map" />
 
   <q-tab-pane name="tab-fitxa" style="padding-top: 0">
   <div>
@@ -90,6 +90,12 @@
 
   <q-tab-pane name="tab-fotos" style="padding: 0px">
     <photos :photos="model.photos" @newPhoto="newPhoto" @deletePhoto="deletePhoto" />
+  </q-tab-pane>
+
+  <q-tab-pane name="tab-sector" style="padding: 0px">
+    <p style="padding: 20px 20px 5px 20px"
+      ><b>Sector:</b> {{ this.currentGroup.code }} - {{ this.currentGroup.name }}</p>
+    <img :src="getSectorImage()" style="height: auto; width: 100%" />
   </q-tab-pane>
 
 </q-tabs>
@@ -179,31 +185,16 @@ export default {
       return options
     },
     elementTypeOptions: function () {
-      var self = this
+      let self = this
       var options = []
-      var group
 
       if (!this.model.location) {
         return options
       }
 
-      this.sharedState.contracts.forEach(function (contract) {
-        if (contract.id === self.model.contract) {
-          contract.groups.forEach(function (element) {
-            if (element.id === self.model.location) {
-              group = element
-            }
-          })
-        }
-      })
-
-      if (!group) {
-        return options
-      }
-
       this.sharedState.elementTypes.forEach(function (element) {
         // console.log(element)
-        if (group.types.includes(element.id)) {
+        if (self.currentGroup.types.includes(element.id)) {
           options.push({label: element.name, value: element.id})
         }
       })
@@ -252,6 +243,23 @@ export default {
         this.model.photos,
         this.model.status,
         new Date())
+    },
+    currentGroup: function () {
+      let self = this
+      var group
+      this.sharedState.contracts.forEach(function (contract) {
+        if (contract.id === self.model.contract) {
+          contract.groups.forEach(function (element) {
+            if (element.id === self.model.location) {
+              group = element
+            }
+          })
+        }
+      })
+      if (!group) {
+        group = {code: '0000', name: 'Sector no trobat', types: []}
+      }
+      return group
     }
   },
   beforeRouteEnter (to, from, next) {
@@ -454,6 +462,9 @@ export default {
       Vue.set(photo, '_delete', true)
       Vue.store.jobsSave()
       Vue.store.queueAddPhoto(photo)
+    },
+    getSectorImage: function () {
+      return Vue.API_ROOT + '/ajgirona/feines_proveidors/static/sectors/' + this.currentGroup.code + '.jpg'
     }
   }
 }
