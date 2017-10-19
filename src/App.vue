@@ -249,7 +249,6 @@ export default {
       if (newJobs) {
         startup.jobs.forEach(remoteJob => {
           let job = self.sharedState.jobs[remoteJob.id]
-          job._is_remote = true
 
           if (!job) {
             job = {
@@ -257,6 +256,8 @@ export default {
               photos: []
             }
           }
+
+          job._is_remote = true
 
           job.contract = remoteJob.contract
           job.elementType = remoteJob.element_type
