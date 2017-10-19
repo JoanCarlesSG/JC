@@ -128,7 +128,7 @@ export default {
   created: function () {
     try {
       Vue.store.stateLoad()
-      setInterval(this.queueCheck, 10000)
+      this.sharedState.queueCheckId = setInterval(this.queueCheck, 10000)
     }
     catch (e) {
       console.log(e)

@@ -73,6 +73,7 @@ export default {
     realLogout () {
       console.log('REAL logout!')
       this.loading = true
+      clearInterval(this.sharedState.queueCheckId)
 
       var url = Vue.API_ROOT + '/ajgirona/feines_proveidors/o/revoke_token/'
       const data = new FormData()
