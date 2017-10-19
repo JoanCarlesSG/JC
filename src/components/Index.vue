@@ -19,6 +19,7 @@
             <q-item-main>
               <q-item-tile label>{{ getItemLabel(item) }}</q-item-tile>
               <q-item-tile sublabel>{{ getItemSublabel(item) }}</q-item-tile>
+              <q-item-tile sublabel>{{ $moment(item.started_on).format('L') }}</q-item-tile>
             </q-item-main>
             <q-item-side right icon="keyboard_arrow_right" />
           </router-link>
