@@ -84,6 +84,7 @@
     <div v-if="model.status == 'done'" style="justify-content: space-between; margin: 40px 0px 5px 0px; text-align: left">
       <q-btn small color="micro" icon="create" @click="reobrirTasca" sytle="margin-right: auto;">Reobrir tasca</q-btn>
     </div>
+    <p style="text-align: center; color: #bbb; margin-top: 50px; font-size: 12px">Feina número {{ this.model.id }}</p>
   </div>
   </q-tab-pane>
 
