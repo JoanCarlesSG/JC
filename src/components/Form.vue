@@ -196,7 +196,7 @@ export default {
         }
       })
 
-      if (!this.model.location) {
+      if (!group) {
         return options
       }
 
