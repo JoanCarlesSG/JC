@@ -233,6 +233,7 @@ export default {
         console.log(jobs)
         if (jobs) {
           Vue._.forEach(jobs.data, function (job) {
+            job._is_remote = false
             console.log('Adding job ' + job.id)
             self.sharedState.jobs[job.id] = job
             job.photos.forEach(photo => {
@@ -248,6 +249,7 @@ export default {
       if (newJobs) {
         startup.jobs.forEach(remoteJob => {
           let job = self.sharedState.jobs[remoteJob.id]
+          job._is_remote = true
 
           if (!job) {
             job = {
@@ -286,6 +288,15 @@ export default {
           })
 
           Vue.set(self.sharedState.jobs, job.id, job)
+        })
+
+        // check if jobs are still valid on the server
+        Vue._.forEach(this.sharedState.jobs, function (job) {
+          if (!job._is_remote && job.id > 0) {
+            // the job has been deleted on the server
+            Vue.store.jobsRemove(job.id)
+            Vue.store.queueRemoveJob(job.id)
+          }
         })
       }
 
