@@ -46,7 +46,7 @@
         </q-list>
 
         <p style="text-align: center; margin-top: 30px; font-size: 0.8em" class="text-grey-7">
-          Versió 0.4.1
+          Versió 0.4.3
         </p>
 
         <p style="text-align: center; margin-top: 30px; font-size: 0.8em" class="text-grey-7">
