@@ -66,7 +66,7 @@
     <q-select
       ref="tascaSelect"
       v-model="model.task"
-      float-label="Task"
+      float-label="Tasca"
       :options="taskOptions"
     />
 
@@ -282,9 +282,9 @@ export default {
           photos: []
         }
         let now = vm.$moment()
-        vm.model.started_on = now.valueOf()
-        console.log(now, vm.model.started_on, 'wooooooop')
-        vm.model.id = -vm.model.started_on
+        vm.model.created_on = now.valueOf()
+        vm.model.id = -vm.model.created_on
+        vm.model.updated_on = vm.model.created_on
 
         Vue.store.jobsAdd(vm.model)
         Vue.store.queueAddJob(vm.model)
@@ -390,6 +390,8 @@ export default {
       if (this.isReady) {
         console.debug('Model has changed!!!')
         this.needsSave = true
+        let now = this.$moment()
+        this.model.updated_on = now.valueOf()
         this.modelSave()
       }
     },

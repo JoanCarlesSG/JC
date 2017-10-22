@@ -242,6 +242,9 @@ export default {
               })
               photoCache[photo.id] = photo
             })
+            if (!job.updated_on) {
+              job.updated_on = 0
+            }
           })
         }
       })
@@ -265,7 +268,10 @@ export default {
           job.task = remoteJob.element_task
           job.note = remoteJob.note
           job.status = remoteJob.status
-          job.started_on = remoteJob.started_on
+          job.created_on = remoteJob.created_on
+          if (remoteJob.updated_on > job.updated_on) {
+            job.updated_on = remoteJob.updated_on
+          }
 
           console.log('remotejob photos: ' + remoteJob.photos.length)
 
@@ -372,8 +378,8 @@ export default {
         data.append('note', job.note)
       }
       data.append('status', job.status)
-      if (job.started_on) {
-        data.append('started_on', this.$moment(job.started_on).toISOString())
+      if (job.created_on) {
+        data.append('created_on', this.$moment(job.created_on).toISOString())
       }
 
       if (job.id > 0) {

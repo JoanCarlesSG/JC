@@ -19,7 +19,7 @@
             <q-item-main>
               <q-item-tile label>{{ getItemLabel(item) }}</q-item-tile>
               <q-item-tile sublabel>{{ getItemSublabel(item) }}</q-item-tile>
-              <q-item-tile sublabel>{{ $moment(item.started_on).format('L') }}</q-item-tile>
+              <q-item-tile sublabel>{{ $moment(item.created_on).format('L') }}</q-item-tile>
             </q-item-main>
             <q-item-side right icon="keyboard_arrow_right" />
           </router-link>
@@ -53,7 +53,12 @@ import Sync from './Sync.vue'
 
 function compareJobs (a, b) {
   if (a.status === b.status) {
-    return 0
+    if (a.updated_on === b.updated_on) {
+      return 0
+    }
+    else {
+      return a.updated_on < b.updated_on
+    }
   }
   if (a.status === 'open') {
     return -1
