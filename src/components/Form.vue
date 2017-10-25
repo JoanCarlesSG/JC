@@ -472,7 +472,8 @@ export default {
       if (this.model.contract &&
           this.model.elementType &&
           this.model.location &&
-          this.model.task) {
+          this.model.task &&
+          this.model.quantity) {
         if (fotoAbans && fotoDespres) {
           Vue.set(this.model, 'status', 'done')
           Vue.nextTick(function () {
