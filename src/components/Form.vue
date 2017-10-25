@@ -20,6 +20,12 @@
      :options="contractOptions"
     />
 
+    <q-select
+    v-model="model.elementType"
+    float-label="Tipus d'element"
+    :options="elementTypeOptions"
+    />
+
 <!-- real Sector selector -->
 <div style="display: flex; align-items: center"
      v-show="showLocationOptions">
@@ -56,12 +62,6 @@
     <q-btn color="grey" icon="close" @click="searchSectorClose" style="display: none"/>
     <q-btn flat small @click="searchSectorClose" ><q-icon name="close" /></q-btn>
 </div>
-
-    <q-select
-    v-model="model.elementType"
-    float-label="Tipus d'element"
-    :options="elementTypeOptions"
-    />
 
     <q-select
       ref="tascaSelect"
@@ -185,6 +185,14 @@ export default {
       return options
     },
     elementTypeOptions: function () {
+      var options = []
+      this.sharedState.elementTypes.forEach(function (element) {
+        // console.log(element)
+        options.push({label: element.name, value: element.id})
+      })
+      return options
+    },
+    elementTypeOptionsSectorFirst: function () {
       let self = this
       var options = []
 
@@ -203,15 +211,15 @@ export default {
     elementGroupsOptions: function () {
       var options = []
       var self = this
-      if (!this.model.contract) {
+      if (!this.model.contract || !this.model.elementType) {
         return options
       }
       this.sharedState.contracts.forEach(function (contract) {
         if (contract.id === self.model.contract) {
           contract.groups.forEach(function (element) {
-            // if (element.types.includes(self.model.elementType)) {
-            options.push({label: element.name, value: element.id})
-            // }
+            if (element.types.includes(self.model.elementType)) {
+              options.push({label: element.name, value: element.id})
+            }
           })
         }
       })
@@ -394,6 +402,10 @@ export default {
         this.model.updated_on = now.valueOf()
         this.modelSave()
       }
+    },
+    modelElementTypeChanged: function () {
+      this.model.location = 0
+      this.model.task = 0
     },
     modelLocationChanged: function () {
       // automatically select element type if there is only one option
