@@ -95,7 +95,14 @@
   <q-tab-pane name="tab-sector" style="padding: 0px">
     <p style="padding: 20px 20px 5px 20px"
       ><b>Sector:</b> {{ this.currentGroup.code }} - {{ this.currentGroup.name }}</p>
-    <img :src="getSectorImage()" style="height: auto; width: 100%" />
+
+      <div style="height: 300px; width: 100%">
+        <pinch-image :src="getSectorImage()"
+                     :min-zoom="1" :max-zoom="3"
+                     style="width: 100%"></pinch-image>
+      </div>
+
+    <!-- <img :src="getSectorImage()" style="height: auto; width: 100%" /> -->
   </q-tab-pane>
 
 </q-tabs>
@@ -125,6 +132,7 @@ import {
 } from 'quasar'
 
 import Photos from './Photos.vue'
+import PinchImage from './PinchImage.vue'
 
 export default {
   components: {
@@ -142,7 +150,8 @@ export default {
     QCardSeparator,
     QCardMain,
     QIcon,
-    Photos
+    Photos,
+    PinchImage
   },
   data () {
     return {
