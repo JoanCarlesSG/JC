@@ -266,6 +266,7 @@ export default {
           job.elementType = remoteJob.element_type
           job.location = remoteJob.element_group
           job.task = remoteJob.element_task
+          job.quantity = remoteJob.quantity
           job.note = remoteJob.note
           job.status = remoteJob.status
           job.created_on = remoteJob.created_on
@@ -374,6 +375,7 @@ export default {
       if (job.task) {
         data.append('element_task', job.task)
       }
+      data.append('quantity', job.quantity || '')
       if (job.note) {
         data.append('note', job.note)
       }

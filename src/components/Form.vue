@@ -71,6 +71,11 @@
     />
 
     <q-input
+      v-model="model.quantity"
+      float-label="Quantitat"
+    />
+
+    <q-input
       v-model="model.note"
       type="textarea"
       float-label="Observacions"
@@ -256,6 +261,7 @@ export default {
         this.model.elementType,
         this.model.location,
         this.model.task,
+        this.model.quantity,
         this.model.note,
         this.model.photos,
         this.model.status,
@@ -377,7 +383,7 @@ export default {
   },
   watch: {
     'modelData': 'modelChanged',
-    // 'model.location': 'modelLocationChanged'
+    'model.location': 'modelLocationChanged',
     'model.elementType': 'modelElementTypeChanged'
   },
   methods: {
@@ -421,6 +427,22 @@ export default {
       }
     },
     modelLocationChanged: function () {
+      if (this.isReady) {
+        if (!this.model.location) {
+          return
+        }
+
+        let self = this
+        var quantity = ''
+        this.currentGroup.details.forEach(function (element) {
+          if (element.element_type === self.model.elementType) {
+            quantity = element.quantity
+          }
+        })
+        this.model.quantity = quantity
+      }
+    },
+    modelLocationChangedSectorFirst: function () {
       // automatically select element type if there is only one option
       if (this.elementTypeOptions.length === 1) {
         this.model.elementType = this.elementTypeOptions[0].value
