@@ -377,7 +377,8 @@ export default {
   },
   watch: {
     'modelData': 'modelChanged',
-    'model.location': 'modelLocationChanged'
+    // 'model.location': 'modelLocationChanged'
+    'model.elementType': 'modelElementTypeChanged'
   },
   methods: {
     includes (terms, {field, list}) {
@@ -413,8 +414,11 @@ export default {
       }
     },
     modelElementTypeChanged: function () {
-      this.model.location = 0
-      this.model.task = 0
+      if (this.isReady) {
+        // FIXME: don't reset location if compatible
+        this.model.location = 0
+        this.model.task = 0
+      }
     },
     modelLocationChanged: function () {
       // automatically select element type if there is only one option
