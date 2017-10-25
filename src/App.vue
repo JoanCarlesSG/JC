@@ -381,6 +381,9 @@ export default {
       if (job.created_on) {
         data.append('created_on', this.$moment(job.created_on).toISOString())
       }
+      if (job.updated_on) {
+        data.append('updated_on', this.$moment(job.updated_on).toISOString())
+      }
 
       if (job.id > 0) {
         // Existing job, update
