@@ -51,29 +51,6 @@ import {
 
 import Sync from './Sync.vue'
 
-function compareJobs (a, b) {
-  if (a.status === b.status) {
-    if (a.updated_on === b.updated_on) {
-      return 0
-    }
-    else {
-      return a.updated_on < b.updated_on
-    }
-  }
-  if (a.status === 'open') {
-    return -1
-  }
-  if (b.status === 'open') {
-    return 1
-  }
-  if (a.status === 'done') {
-    return 1
-  }
-  if (b.status === 'done') {
-    return -1
-  }
-}
-
 export default {
   name: 'index',
   components: {
@@ -109,7 +86,7 @@ export default {
         jobs.push(value)
       })
 
-      Vue.set(vm, 'jobs', jobs.sort(compareJobs))
+      Vue.set(vm, 'jobs', jobs.sort(vm.compareJobs))
     })
   },
   beforeRouteUpdate (to, from, next) {
@@ -120,13 +97,35 @@ export default {
         jobs.push(value)
       })
 
-      Vue.set(vm, 'jobs', jobs.sort(compareJobs))
+      Vue.set(vm, 'jobs', jobs.sort(vm.compareJobs))
     })
   },
   watch: {
     'sharedState.jobs': 'jobsChanged'
   },
   methods: {
+    compareJobs (a, b) {
+      if (a.status === b.status) {
+        if (a.updated_on === b.updated_on) {
+          return 0
+        }
+        else {
+          return a.updated_on < b.updated_on
+        }
+      }
+      if (a.status === 'open') {
+        return -1
+      }
+      if (b.status === 'open') {
+        return 1
+      }
+      if (a.status === 'done') {
+        return 1
+      }
+      if (b.status === 'done') {
+        return -1
+      }
+    },
     add_job () {
       this.$router.push('/form/add')
     },

@@ -303,7 +303,8 @@ export default {
           task: '',
           note: '',
           quantity: '',
-          photos: []
+          photos: [],
+          status: 'open'
         }
         let now = vm.$moment()
         vm.model.created_on = now.valueOf()
