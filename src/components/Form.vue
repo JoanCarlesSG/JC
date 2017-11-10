@@ -302,6 +302,7 @@ export default {
           location: '',
           task: '',
           note: '',
+          quantity: '',
           photos: []
         }
         let now = vm.$moment()
