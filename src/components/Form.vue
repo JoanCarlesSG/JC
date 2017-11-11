@@ -73,6 +73,10 @@
     <q-input
       v-model="model.quantity"
       float-label="Quantitat"
+      align="right"
+      type="number"
+      :readonly="model.quantityReadonly"
+      :suffix="model.quantitySuffix"
     />
 
     <q-input
@@ -303,6 +307,8 @@ export default {
           task: '',
           note: '',
           quantity: '',
+          quantityReadonly: false,
+          quantitySuffix: '',
           photos: [],
           status: 'open'
         }
@@ -436,12 +442,18 @@ export default {
 
         let self = this
         var quantity = ''
+        var quantityReadonly = false
+        var quantitySuffix = ''
         this.currentGroup.details.forEach(function (element) {
           if (element.element_type === self.model.elementType) {
             quantity = element.quantity
+            quantityReadonly = true
+            quantitySuffix = 'm2'
           }
         })
         this.model.quantity = quantity
+        this.model.quantityReadonly = quantityReadonly
+        this.model.quantitySuffix = quantitySuffix
       }
     },
     modelLocationChangedSectorFirst: function () {
