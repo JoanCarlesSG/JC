@@ -54,6 +54,7 @@ import Lawnchair from 'lawnchair'
 
 var store = {
   state: {
+    errors: [],
     access_token: '',
     jobs: {},
     queue: {

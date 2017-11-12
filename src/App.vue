@@ -70,7 +70,8 @@
       </q-transition>
 
       <keep-alive>
-        <router-view v-if="!loading" class="layout-view"></router-view>
+        <router-view v-if="!loading" class="layout-view"
+          @refresh="refresh"></router-view>
       </keep-alive>
 
     </q-layout>
@@ -139,6 +140,51 @@ export default {
     '$route': 'routeChanged'
   },
   methods: {
+    refresh () {
+      console.log('Refreshing data...')
+      this.loading = true
+      this.sharedState.errors = []
+
+      var config = {
+        headers: {'Authorization': 'Bearer '.concat(this.sharedState.access_token)},
+        timeout: 10000
+      }
+
+      let self = this
+      // Fetches posts when the component is created.
+      this.axios.get(Vue.API_ROOT + '/ajgirona/feines_proveidors/startup', config)
+        .then(response => {
+          console.log('startup response ok')
+          // JSON responses are automatically parsed.
+          self.loadStartupData(response.data, true)
+
+          console.log(self.startup)
+          // Save startup cache
+          Vue.store.localStore.save({key: 'startup', data: self.startup})
+          console.log('startup cache saved')
+          self.loading = false
+        })
+        .catch(e => {
+          console.log(e)
+          if (e.request.status === 403) {
+            self.loading = false
+            self.$router.push('/login')
+          }
+          else {
+            console.log('startup response ERROR')
+            let message
+            if (e.message) {
+              message = e.message
+            }
+            else {
+              message = 'Error al contactar el servidor'
+            }
+            self.sharedState.errors.push(message)
+            console.log(self.sharedState.errors)
+            self.loading = false
+          }
+        })
+    },
     logout () {
       console.log('woooop')
       this.$router.push('/logout')

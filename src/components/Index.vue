@@ -1,9 +1,28 @@
 <template>
-  <div class="layout-view">
-    <sync />
-      <q-fixed-position corner="bottom-right" :offset="[18, 18]" style="z-index: 500">
-        <q-btn round color="primary" @click="add_job" icon="add"/>
-      </q-fixed-position>
+<div>
+  <q-fixed-position corner="bottom-right" :offset="[18, 18]" style="z-index: 500">
+    <q-btn round color="primary" @click="add_job" icon="add"/>
+  </q-fixed-position>
+
+  <q-pull-to-refresh :handler="refresher"
+    pull-message="Tireu per actualitzar"
+    release-message="Deixeu anar per actualitzar"
+    refresh-message="Refrescant...">
+
+    <div class="layout-view">
+      <sync />
+
+      <q-alert
+        v-for="error in sharedState.errors"
+        :key="error"
+        type="negative"
+        ref="destroyableAlert"
+        enter="bounceInRight"
+        leave="bounceOutLeft"
+        dismissible
+      >
+        {{ error }}
+      </q-alert>
 
       <q-list no-border striped>
         <q-list-header>Feines</q-list-header>
@@ -25,8 +44,9 @@
           </router-link>
         </q-item>
       </q-list>
-
     </div>
+  </q-pull-to-refresh>
+</div>
 </template>
 
 <script>
@@ -46,7 +66,8 @@ import {
   QItemTile,
   QFixedPosition,
   QTransition,
-  QAlert
+  QAlert,
+  QPullToRefresh
 } from 'quasar'
 
 import Sync from './Sync.vue'
@@ -68,7 +89,8 @@ export default {
     QFixedPosition,
     QTransition,
     QAlert,
-    Sync
+    Sync,
+    QPullToRefresh
   },
   data () {
     return {
@@ -202,6 +224,14 @@ export default {
       else {
         return ''
       }
+    },
+    refresher (done) {
+      // done - Function to call when you made all necessary updates.
+      //        DO NOT forget to call it otherwise the refresh message
+      //        will continue to be displayed
+      // make some Ajax call then call done()
+      this.$emit('refresh')
+      done()
     }
   },
   mounted () {
