@@ -28,8 +28,9 @@
         -->
 
         <q-list no-border link inset-delimiter>
-          <q-list-header>{{ sharedState.username }}</q-list-header>
-          <q-item @click="logout">
+          <q-list-header
+            v-if="sharedState.username">{{ sharedState.username }}</q-list-header>
+          <q-item v-if="sharedState.username" @click="logout">
             <q-item-side icon="exit_to_app" />
             <q-item-main label="Tancar sessió" />
           </q-item>
@@ -273,7 +274,7 @@ export default {
     loadStartupData (startup, newJobs) {
       console.log('startup data: ', startup)
       this.startup = startup
-      this.sharedState.username = startup.username
+      Vue.set(this.sharedState, 'username', startup.username)
       this.sharedState.contracts = startup.contracts
       this.sharedState.elementTypes = startup.element_types
       this.sharedState.elementGroups = startup.element_groups
