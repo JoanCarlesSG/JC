@@ -518,11 +518,21 @@ export default {
       if (photo.id > 0) {
         // Existing job
         if (photo._delete) {
-          console.log('DELETE PHOTO')
-          console.log(photo)
-          Vue.store.queueRemovePhoto(photo.id)
-          Vue.store.queueSetRunning(false)
-          this.queueCheck()
+          console.log('Delete existing photo', photo)
+          url = Vue.API_ROOT + '/ajgirona/feines_proveidors/api/v1/jobphotos/' + photo.id + '/'
+
+          self.axios.delete(url, config)
+            .then(function (response) {
+              console.debug('Photo deleted response:')
+              console.debug(response)
+              Vue.store.queueRemovePhoto(photo.id)
+              Vue.store.queueSetRunning(false)
+              self.queueCheck()
+            })
+            .catch(function (error) {
+              console.log(error)
+              Vue.store.queueSetRunning(false)
+            })
         }
         else {
           console.error('Update photo not implemented')

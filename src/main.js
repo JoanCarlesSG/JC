@@ -140,6 +140,11 @@ var store = {
     this.state.queue.photos.push(photo)
     this.queueSave()
   },
+  queueDeletePhoto: function (photo) {
+    // check if the photo is already in the queue for upload
+    this.queueRemovePhoto(photo.id)
+    this.queueAddPhoto(photo)
+  },
   queueRemovePhoto: function (photoId) {
     Vue._.remove(this.state.queue.photos, function (n) {
       return n.id === photoId

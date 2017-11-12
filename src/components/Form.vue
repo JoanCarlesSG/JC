@@ -543,7 +543,7 @@ export default {
     deletePhoto: function (photo) {
       Vue.set(photo, '_delete', true)
       Vue.store.jobsSave()
-      Vue.store.queueAddPhoto(photo)
+      Vue.store.queueDeletePhoto(photo)
     },
     getSectorImage: function () {
       return Vue.API_ROOT + '/ajgirona/feines_proveidors/static/sectors/' + this.currentGroup.code + '.jpg'
