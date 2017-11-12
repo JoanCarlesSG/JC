@@ -529,9 +529,13 @@ export default {
               Vue.store.queueSetRunning(false)
               self.queueCheck()
             })
-            .catch(function (error) {
-              console.log(error)
+            .catch(function (e) {
+              console.log(e)
+              if (e.request.status === 404) {
+                Vue.store.queueRemovePhoto(photo.id)
+              }
               Vue.store.queueSetRunning(false)
+              self.queueCheck()
             })
         }
         else {
