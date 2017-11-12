@@ -333,10 +333,10 @@ export default {
           job.task = remoteJob.element_task
           job.quantity = remoteJob.quantity
           job.note = remoteJob.note
-          job.status = remoteJob.status
+          Vue.set(job, 'status', remoteJob.status)
           job.created_on = remoteJob.created_on
           if (remoteJob.updated_on > job.updated_on) {
-            job.updated_on = remoteJob.updated_on
+            Vue.set(job, 'updated_on', remoteJob.updated_on)
           }
 
           console.log('remotejob photos: ' + remoteJob.photos.length)
