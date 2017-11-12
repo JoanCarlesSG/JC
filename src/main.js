@@ -14,6 +14,7 @@ import Vue from 'vue'
 
 // Vue.API_ROOT = 'http://xenial.local'
 Vue.API_ROOT = 'https://server3.microdisseny.com'
+Vue.APP_VERSION = '0.5.1'
 
 import moment from 'moment'
 import 'moment/locale/ca'
@@ -55,6 +56,7 @@ import Lawnchair from 'lawnchair'
 var store = {
   state: {
     errors: [],
+    username: '',
     access_token: '',
     jobs: {},
     queue: {

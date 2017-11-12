@@ -79,8 +79,8 @@ export default {
       const data = new FormData()
       data.append('token', this.sharedState.access_token)
       data.append('client_id', 'HrBnfIV54e82dwIeo2heqY4QvJTy0gX56yMpJ5wE')
-      this.sharedState.access_token = null
-      this.sharedState = {
+      Vue.store.state.access_token = null
+      Vue.store.state.sharedState = {
         access_token: '',
         jobs: {},
         queue: {
@@ -96,6 +96,10 @@ export default {
       }
 
       Vue.store.localStore.nuke()
+
+      data.append('_version', Vue.APP_VERSION)
+      data.append('_username', this.sharedState.username)
+      this.sharedState.username = ''
 
       var self = this
       this.axios.post(url, data)

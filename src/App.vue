@@ -46,7 +46,7 @@
         </q-list>
 
         <p style="text-align: center; margin-top: 30px; font-size: 0.8em" class="text-grey-7">
-          Versió 0.5.1
+          Versió {{ vue.APP_VERSION }}
         </p>
 
         <p style="text-align: center; margin-top: 30px; font-size: 0.8em" class="text-grey-7">
@@ -123,7 +123,8 @@ export default {
       loading: false,
       startup: null,
       errors: [],
-      sharedState: Vue.store.state
+      sharedState: Vue.store.state,
+      vue: Vue
     }
   },
   created: function () {
@@ -147,7 +148,11 @@ export default {
 
       var config = {
         headers: {'Authorization': 'Bearer '.concat(this.sharedState.access_token)},
-        timeout: 10000
+        timeout: 10000,
+        params: {
+          '_version': Vue.APP_VERSION,
+          '_username': this.sharedState.username
+        }
       }
 
       let self = this
@@ -225,7 +230,11 @@ export default {
 
         var config = {
           headers: {'Authorization': 'Bearer '.concat(this.sharedState.access_token)},
-          timeout: 10000
+          timeout: 10000,
+          params: {
+            '_version': Vue.APP_VERSION,
+            '_username': this.sharedState.username
+          }
         }
 
         // Fetches posts when the component is created.
@@ -433,6 +442,9 @@ export default {
         data.append('updated_on', this.$moment(job.updated_on).toISOString())
       }
 
+      data.append('_version', Vue.APP_VERSION)
+      data.append('_username', this.sharedState.username)
+
       if (job.id > 0) {
         // Existing job, update
         let url = Vue.API_ROOT + '/ajgirona/feines_proveidors/api/v1/jobs/' + job.id + '/'
@@ -489,6 +501,8 @@ export default {
       data.append('description', photo.description)
       data.append('taken_on', self.$moment(photo.taken_on).toISOString())
       data.append('photo_type', photo.type)
+      data.append('_version', Vue.APP_VERSION)
+      data.append('_username', self.sharedState.username)
       console.log(photo)
 
       if (photo.id > 0) {

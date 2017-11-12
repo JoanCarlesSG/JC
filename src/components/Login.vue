@@ -81,6 +81,8 @@ export default {
       data.append('password', this.password)
       data.append('grant_type', 'password')
       data.append('client_id', 'HrBnfIV54e82dwIeo2heqY4QvJTy0gX56yMpJ5wE')
+      data.append('_version', Vue.APP_VERSION)
+      data.append('_username', this.sharedState.username)
 
       var self = this
       this.axios.post(url, data, { timeout: 5000 })
