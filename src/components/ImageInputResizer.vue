@@ -99,7 +99,7 @@ export default {
     newImage (photo) {
       this.photo = photo
       if (navigator && navigator.camera) {
-        this.openCamera()
+        this.openCamera(photo.gallery)
       }
       else {
         this.$refs.file.click()
@@ -135,10 +135,15 @@ export default {
       }
       return options
     },
-    openCamera (selection) {
+    openCamera (gallery) {
       var srcType = navigator.camera.PictureSourceType.CAMERA
       var options = this.setOptions(srcType)
       var func = this.processImageFromCamera
+
+      if (gallery) {
+        srcType = navigator.camera.PictureSourceType.PHOTOLIBRARY
+        options = this.setOptions(srcType)
+      }
 
       navigator.camera.getPicture(function cameraSuccess (imageUri) {
         func(imageUri)

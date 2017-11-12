@@ -71,7 +71,7 @@ export default {
     }
   },
   methods: {
-    newPhoto (abans) {
+    newPhoto (abans, gallery) {
       let photo = {}
       if (abans) {
         photo.description = 'Foto abans'
@@ -81,6 +81,9 @@ export default {
         photo.description = 'Foto després'
         photo.type = 'despres'
       }
+
+      photo.gallery = gallery
+
       this.$refs.imageinputresizer.newImage(photo)
     },
     deletePhoto (photo) {

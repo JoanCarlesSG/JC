@@ -103,7 +103,7 @@
   </q-tab-pane>
 
   <q-tab-pane name="tab-fotos" style="padding: 0px">
-    <photos :photos="model.photos" @newPhoto="newPhoto" @deletePhoto="deletePhoto" />
+    <photos ref="photos" :photos="model.photos" @newPhoto="newPhoto" @deletePhoto="deletePhoto" />
   </q-tab-pane>
 
   <q-tab-pane name="tab-sector" style="padding: 0px">
@@ -330,6 +330,7 @@ export default {
 
         vm.needsSave = false
         vm.selectedTab = 'tab-fitxa'
+        Vue.set(vm.sharedState, 'currentForm', vm)
         Vue.nextTick(function () {
           vm.isReady = true
         })
@@ -363,6 +364,7 @@ export default {
           }
           vm.needsSave = false
           vm.selectedTab = 'tab-fitxa'
+          Vue.set(vm.sharedState, 'currentForm', vm)
           Vue.nextTick(function () {
             vm.isReady = true
           })
@@ -486,6 +488,14 @@ export default {
         window.local = Vue.store.localStore
       }
     }, 5000),
+    photoFromGallery: function () {
+      console.log('add photo from gallery')
+
+      // FIXME: refactor into computed property
+      var fotoAbans = this.model.photos.some(f => f.type === 'abans')
+
+      this.$refs.photos.newPhoto(!fotoAbans, true)
+    },
     tancarTasca: function () {
       let self = this
       var fotoAbans = this.model.photos.some(f => f.type === 'abans')
