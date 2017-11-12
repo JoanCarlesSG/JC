@@ -18,12 +18,14 @@
       v-show="showContract"
       float-label="Lot"
      :options="contractOptions"
+     :disable="readonly"
     />
 
     <q-select
     v-model="model.elementType"
     float-label="Tipus d'element"
     :options="elementTypeOptions"
+    :disable="readonly"
     />
 
 <!-- real Sector selector -->
@@ -37,10 +39,11 @@
       :options="elementGroupsOptions"
       style="flex-grow: 1;"
       @created="searchSector"
+      :disable="readonly"
     />
 
-    <q-btn color="grey" icon="search" @click="searchSector" style="display:none" />
-    <q-btn flat small @click="searchSector" ><q-icon name="search" /></q-btn>
+    <q-btn v-if="!readonly" color="grey" icon="search" @click="searchSector" style="display:none" />
+    <q-btn v-if="!readonly" flat small @click="searchSector" ><q-icon name="search" /></q-btn>
 </div>
 
 <!-- search box for sector -->
@@ -68,6 +71,7 @@
       v-model="model.task"
       float-label="Tasca"
       :options="taskOptions"
+      :disable="readonly"
     />
 
     <q-input
@@ -75,7 +79,7 @@
       float-label="Quantitat"
       align="right"
       type="number"
-      :readonly="model.quantityReadonly"
+      :readonly="model.quantityReadonly || readonly"
       :suffix="model.quantitySuffix"
     />
 
@@ -85,6 +89,7 @@
       float-label="Observacions"
       :max-height="100"
       :min-rows="1"
+      :readonly="readonly"
     />
 
     <div v-if="model.status != 'done'" style="justify-content: space-between; margin: 40px 0px 5px 0px; text-align: right">
@@ -192,6 +197,9 @@ export default {
     }
   },
   computed: {
+    readonly: function () {
+      return this.model.status === 'done'
+    },
     contractOptions: function () {
       var options = []
       console.log(this.sharedState)
