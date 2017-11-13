@@ -263,7 +263,7 @@ export default {
           })
           .catch(e => {
             console.log(e)
-            if (e.request.status === 403) {
+            if (e.request && e.request.status === 403) {
               self.loading = false
               self.$router.push('/login')
             }
@@ -299,6 +299,9 @@ export default {
         console.log(jobs)
         if (jobs) {
           Vue._.forEach(jobs.data, function (job) {
+            if (!job) {
+              return
+            }
             job._is_remote = false
             console.log('Adding job ' + job.id)
             self.sharedState.jobs[job.id] = job
