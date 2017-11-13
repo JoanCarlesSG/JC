@@ -5,7 +5,7 @@
       @ready="imageReady"
       />
 
-    <div style="display: flex; justify-content: space-between; margin: 12px 10px 5px 9px;">
+    <div v-if="!readonly" style="display: flex; justify-content: space-between; margin: 12px 10px 5px 9px;">
       <q-btn color="micro" icon="photo" @click="newPhoto(true)" style="">Foto abans</q-btn>
       <q-btn color="micro" icon="photo" @click="newPhoto(false)" sytle="margin-left: auto;">Foto després</q-btn>
     </div>
@@ -17,14 +17,14 @@
       <q-card-title>
         <div style="font-size: 16px; line-height: 18px">{{ item.description }}</div>
         <div class="upper" style="font-size: 12px; line-height: 14px">{{ $moment(item.taken_on).format('LLL') }}</div>
-        <div slot="right">
+        <div v-if="!readonly" slot="right">
           <!-- <q-btn flat small ><q-icon name="edit" /></q-btn> -->
           <q-btn flat small @click="deletePhoto(item)" ><q-icon name="delete" /></q-btn>
         </div>
       </q-card-title>
     </q-card>
 
-    <div v-if="photos.length > 0" style="display: flex; justify-content: space-between; margin: 12px 10px 50px 9px;">
+    <div v-if="photos.length > 0 && !readonly" style="display: flex; justify-content: space-between; margin: 12px 10px 50px 9px;">
       <q-btn color="micro" icon="photo" @click="newPhoto(true)" style="">Foto abans</q-btn>
       <q-btn color="micro" icon="photo" @click="newPhoto(false)" sytle="margin-left: auto;">Foto després</q-btn>
     </div>
@@ -51,7 +51,8 @@ import ImageInputResizer from './ImageInputResizer.vue'
 
 export default {
   props: {
-    photos: Array
+    photos: Array,
+    readonly: {type: Boolean, required: true}
   },
   components: {
     QInput,

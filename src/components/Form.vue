@@ -103,7 +103,11 @@
   </q-tab-pane>
 
   <q-tab-pane name="tab-fotos" style="padding: 0px">
-    <photos ref="photos" :photos="model.photos" @newPhoto="newPhoto" @deletePhoto="deletePhoto" />
+    <photos ref="photos"
+            :photos="model.photos"
+            :readonly="readonly"
+            @newPhoto="newPhoto"
+            @deletePhoto="deletePhoto" />
   </q-tab-pane>
 
   <q-tab-pane name="tab-sector" style="padding: 0px">
