@@ -102,25 +102,13 @@ export default {
   },
   beforeRouteEnter (to, from, next) {
     next(vm => {
-      Vue.set(vm, 'jobs', [])
-      let jobs = []
-      Vue._.forOwn(vm.sharedState.jobs, function (value, key) {
-        jobs.push(value)
-      })
-
-      Vue.set(vm.sharedState, 'jobs', jobs.sort(vm.compareJobs))
       Vue.set(vm.sharedState, 'currentView', vm)
+      vm.jobsChanged()
     })
   },
   beforeRouteUpdate (to, from, next) {
     next(vm => {
-      Vue.set(vm, 'jobs', [])
-      let jobs = []
-      Vue._.forOwn(vm.sharedState.jobs, function (value, key) {
-        jobs.push(value)
-      })
-
-      Vue.set(vm.sharedState, 'jobs', jobs.sort(vm.compareJobs))
+      vm.jobsChanged()
     })
   },
   watch: {
@@ -155,7 +143,13 @@ export default {
     jobsChanged () {
       console.warn('Jobs changed!')
       Vue.set(this, 'jobs', [])
-      Vue.set(this, 'jobs', this.sharedState.jobs)
+
+      let jobs = []
+      Vue._.forOwn(this.sharedState.jobs, function (value, key) {
+        jobs.push(value)
+      })
+
+      Vue.set(this, 'jobs', jobs.sort(this.compareJobs))
     },
     getItemIcon (item) {
       if (item.status === 'open') {
