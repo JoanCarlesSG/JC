@@ -108,7 +108,7 @@ export default {
         jobs.push(value)
       })
 
-      Vue.set(vm, 'jobs', jobs.sort(vm.compareJobs))
+      Vue.set(vm.sharedState, 'jobs', jobs.sort(vm.compareJobs))
       Vue.set(vm.sharedState, 'currentView', vm)
     })
   },
@@ -120,7 +120,7 @@ export default {
         jobs.push(value)
       })
 
-      Vue.set(vm, 'jobs', jobs.sort(vm.compareJobs))
+      Vue.set(vm.sharedState, 'jobs', jobs.sort(vm.compareJobs))
     })
   },
   watch: {
@@ -133,7 +133,7 @@ export default {
           return 0
         }
         else {
-          return a.updated_on < b.updated_on
+          return (a.updated_on < b.updated_on) ? 1 : -1
         }
       }
       if (a.status === 'open') {
