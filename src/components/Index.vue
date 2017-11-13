@@ -109,6 +109,7 @@ export default {
       })
 
       Vue.set(vm, 'jobs', jobs.sort(vm.compareJobs))
+      Vue.set(vm.sharedState, 'currentView', vm)
     })
   },
   beforeRouteUpdate (to, from, next) {

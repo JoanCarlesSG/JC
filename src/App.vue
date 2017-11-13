@@ -173,6 +173,7 @@ export default {
           // Save startup cache
           Vue.store.localStore.save({key: 'startup', data: self.startup})
           console.log('startup cache saved')
+          self.sharedState.currentView.jobsChanged()
           self.loading = false
         })
         .catch(e => {
