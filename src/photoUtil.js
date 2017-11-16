@@ -10,11 +10,14 @@ export default {
       return
     }
 
-    if (photo.src.startsWith('blob:')) {
-      this._getBlobLocalStore(photo, callback)
-    }
-    else if (photo.src.startsWith('file:')) {
+    console.debug('getBlob', photo.src, photo)
+
+    if (photo.src.startsWith('file:') ||
+        photo.src.startsWith('blob:file:')) {
       this._getBlobCordova(photo, callback)
+    }
+    else if (photo.src.startsWith('blob:http')) {
+      this._getBlobLocalStore(photo, callback)
     }
   },
   _getBlobLocalStore (photo, callback) {
