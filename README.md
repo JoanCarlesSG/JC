@@ -17,3 +17,9 @@ $ quasar build
 # lint code
 $ quasar lint
 ```
+
+## Cordova
+
+```
+cordova run
+```
