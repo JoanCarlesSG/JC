@@ -23,7 +23,7 @@
 
     <q-select
     v-model="model.elementType"
-    float-label="Tipus d'element"
+    float-label="Tipus de verd"
     :options="elementTypeOptions"
     :disable="readonly"
     />
