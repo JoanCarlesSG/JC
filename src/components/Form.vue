@@ -306,7 +306,7 @@ export default {
       next(vm => {
         if (vm.sharedState.contracts.length === 0) {
           console.warn('No contracts, redirecting to Index')
-          vm.$router.push('/')
+          vm.$router.replace('/')
           return
         }
 
@@ -353,7 +353,7 @@ export default {
         console.log(vm.sharedState.contracts)
         if (vm.sharedState.contracts.length === 0) {
           console.warn('No contracts, redirecting to Index')
-          vm.$router.push('/')
+          vm.$router.replace('/')
           return
         }
 
@@ -375,7 +375,7 @@ export default {
         }
         else {
           console.error('Job not found', to.params)
-          vm.$router.push('/')
+          vm.$router.replace('/')
           // throw 'not found'
         }
       })
@@ -513,7 +513,7 @@ export default {
         if (fotoAbans && fotoDespres) {
           Vue.set(this.model, 'status', 'done')
           Vue.nextTick(function () {
-            self.$router.push('/')
+            self.$router.replace('/')
           })
         }
         else {
