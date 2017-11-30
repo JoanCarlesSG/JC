@@ -34,11 +34,6 @@
             <q-item-side icon="exit_to_app" />
             <q-item-main label="Tancar sessió" />
           </q-item>
-          <q-item v-if="sharedState.currentForm && !sharedState.currentForm.readonly"
-                  @click="photoFromGallery">
-            <q-item-side icon="photo" />
-            <q-item-main label="Afegir fotografia de la galeria" />
-          </q-item>
           <!--
           <q-item to="/report">
             <q-item-side icon="bug_report" />
@@ -201,10 +196,6 @@ export default {
       console.log('woooop')
       this.$router.push('/logout')
       this.$refs.layout.hideCurrentSide()
-    },
-    photoFromGallery () {
-      this.$refs.layout.hideCurrentSide()
-      this.sharedState.currentForm.photoFromGallery()
     },
     routeChanged () {
       let self = this

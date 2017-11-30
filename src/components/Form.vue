@@ -492,14 +492,6 @@ export default {
         window.local = Vue.store.localStore
       }
     }, 5000),
-    photoFromGallery: function () {
-      console.log('add photo from gallery')
-
-      // FIXME: refactor into computed property
-      var fotoAbans = this.model.photos.some(f => f.type === 'abans')
-
-      this.$refs.photos.newPhoto(!fotoAbans, true)
-    },
     tancarTasca: function () {
       let self = this
       var fotoAbans = this.model.photos.some(f => f.type === 'abans')
