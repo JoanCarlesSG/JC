@@ -12,7 +12,7 @@
 
     <q-card inline v-if="displayPhoto(item)" v-for="item in photos" :key="item.id" :id="'photo_' + item.id">
       <q-card-media>
-        <img :src="item.src" style="height: auto; width: 100%">
+        <img :src="item.src + '?access_token=' + sharedState.access_token" style="height: auto; width: 100%">
       </q-card-media>
       <q-card-title>
         <div style="font-size: 16px; line-height: 18px">{{ item.description }}</div>
