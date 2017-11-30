@@ -6,8 +6,10 @@
       />
 
     <div v-if="!readonly" style="display: flex; justify-content: space-between; margin: 12px 10px 5px 9px;">
-      <q-btn color="micro" icon="photo" @click="newPhoto(true)" style="">Foto abans</q-btn>
-      <q-btn color="micro" icon="photo" @click="newPhoto(false)" sytle="margin-left: auto;">Foto després</q-btn>
+      <q-btn color="micro" icon="photo camera" @click="newPhoto(true)" class="photo-small" style="">Abans</q-btn>
+      <q-btn color="micro" icon="attach file" @click="photoFromGallery(true, true)" class="photo-small" style="">Abans</q-btn>
+      <q-btn color="micro" icon="photo camera" @click="newPhoto(false)" class="photo-small" sytle="margin-left: auto;">Després</q-btn>
+      <q-btn color="micro" icon="attach file" @click="photoFromGallery(false, true)" class="photo-small" sytle="margin-left: auto;">Després</q-btn>
     </div>
 
     <q-card inline v-if="displayPhoto(item)" v-for="item in photos" :key="item.id" :id="'photo_' + item.id">
@@ -25,8 +27,10 @@
     </q-card>
 
     <div v-if="photos.length > 0 && !readonly" style="display: flex; justify-content: space-between; margin: 12px 10px 50px 9px;">
-      <q-btn color="micro" icon="photo" @click="newPhoto(true)" style="">Foto abans</q-btn>
-      <q-btn color="micro" icon="photo" @click="newPhoto(false)" sytle="margin-left: auto;">Foto després</q-btn>
+      <q-btn color="micro" icon="photo camera" @click="newPhoto(true)" class="photo-small" style="">Abans</q-btn>
+      <q-btn color="micro" icon="attach file" @click="photoFromGallery(true, true)" class="photo-small" style="">Abans</q-btn>
+      <q-btn color="micro" icon="photo camera" @click="newPhoto(false)" class="photo-small" sytle="margin-left: auto;">Després</q-btn>
+      <q-btn color="micro" icon="attach file" @click="photoFromGallery(false, true)" class="photo-small" sytle="margin-left: auto;">Després</q-btn>
     </div>
   </div>
 </template>

@@ -617,6 +617,17 @@ export default {
 .q-btn.q-btn-rectangle.bg-micro {
   color: #fff;
   background: #3b8ac3;
+  
+}
+
+.q-btn.q-btn-rectangle.photo-small {
+  padding: 10px 10px;
+  width: 23%
+}
+
+.photo-small i.on-left {
+  margin-right: 10px;
+  margin-left: 10px;
 }
 
 /*.layout-view > div:first-child  {*/
