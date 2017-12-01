@@ -76,11 +76,9 @@
 
     <q-input
       v-model="model.quantity"
-      float-label="Quantitat"
-      align="right"
+      :float-label="quantitatLabel"
       type="number"
       :readonly="model.quantityReadonly || readonly"
-      :suffix="model.quantitySuffix"
     />
 
     <q-input
@@ -268,6 +266,15 @@ export default {
       })
       return options
     },
+    quantitatLabel () {
+      if (this.model.elementType === 1) {
+        return 'Quantitat (núm. arbres)'
+      }
+      else if (this.model.elementType === 9) {
+        return 'Quantitat'
+      }
+      return 'Quantitat (m2)'
+    },
     modelData: function () {
       // watch all form variables
       // https://github.com/vuejs/vue/issues/844
@@ -320,7 +327,6 @@ export default {
           note: '',
           quantity: '',
           quantityReadonly: false,
-          quantitySuffix: '',
           photos: [],
           status: 'open'
         }
@@ -457,17 +463,14 @@ export default {
         let self = this
         var quantity = ''
         var quantityReadonly = false
-        var quantitySuffix = ''
         this.currentGroup.details.forEach(function (element) {
           if (element.element_type === self.model.elementType) {
             quantity = element.quantity
             quantityReadonly = true
-            quantitySuffix = 'm2'
           }
         })
         this.model.quantity = quantity
         this.model.quantityReadonly = quantityReadonly
-        this.model.quantitySuffix = quantitySuffix
       }
     },
     modelLocationChangedSectorFirst: function () {
