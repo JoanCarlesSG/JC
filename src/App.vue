@@ -175,7 +175,7 @@ export default {
           console.log(e)
           if (e.request.status === 403) {
             self.loading = false
-            self.$router.push('/login')
+            self.$router.replace('/login')
           }
           else {
             console.log('startup response ERROR')
@@ -220,7 +220,7 @@ export default {
       console.log('Auth ok?')
       if (!this.sharedState.access_token) {
         this.loading = false
-        this.$router.push('/login')
+        this.$router.replace('/login')
         console.log('Needs login')
         return
       }
@@ -256,7 +256,7 @@ export default {
             console.log(e)
             if (e.request && e.request.status === 403) {
               self.loading = false
-              self.$router.push('/login')
+              self.$router.replace('/login')
             }
             else {
               console.log('startup response ERROR')
