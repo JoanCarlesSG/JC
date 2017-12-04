@@ -7,8 +7,8 @@
       :left-class="{'bg-grey-2': true}"
     >
       <q-toolbar slot="header" class="">
-        <q-toolbar-title @click="$router.replace('/')">
-          Feines proveïdors
+        <q-toolbar-title @click="$router.replace('/')" class="app_title">
+          GESPARC - Registre de tasques
           <div slot="subtitle">Ajuntament de Girona</div>
         </q-toolbar-title>
 
@@ -593,7 +593,7 @@ export default {
 <style>
 .q-toolbar { background: #0d65a3; }
 .q-toolbar-title {
-  background: url(https://server3.microdisseny.com/ajgirona/feines_proveidors/static/feines_proveidors/logo_ajgirona-white.svg) no-repeat left 10px;
+  background: url('./assets/app_logo.png') no-repeat left 10px;
   background-size: 36px 36px;
   padding: 10px 45px 10px
 }
@@ -665,6 +665,11 @@ div.data-sync {
   font-size: 4em;
 	vertical-align: middle;
   margin: 0px 0 10px 0;
+}
+
+.app_title {
+  padding: 9px 10px 10px 45px;
+  font-size: 1.0em;
 }
 
 </style>
