@@ -14,7 +14,7 @@ import Vue from 'vue'
 
 // Vue.API_ROOT = 'http://xenial.local'
 Vue.API_ROOT = 'https://server3.microdisseny.com'
-Vue.APP_VERSION = '0.7.0'
+Vue.APP_VERSION = '0.7.1'
 
 import moment from 'moment'
 import 'moment/locale/ca'
