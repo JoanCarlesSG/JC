@@ -75,12 +75,18 @@ var store = {
 
   stateSave: function () {
     this.localStore.save({key: 'access_token', data: this.state.access_token})
+    this.localStore.save({key: 'username', data: this.state.username})
   },
   stateLoad: function () {
     let self = this
     this.localStore.get('access_token', function (accessToken) {
       if (accessToken) {
         self.state.access_token = accessToken.data
+      }
+    })
+    this.localStore.get('username', function (username) {
+      if (username) {
+        self.state.username = username.data
       }
     })
   },
