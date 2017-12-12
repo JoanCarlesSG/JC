@@ -593,7 +593,7 @@ export default {
 <style>
 .q-toolbar { background: #0d65a3; }
 .q-toolbar-title {
-  background: url('./assets/app_logo.png') no-repeat left 10px;
+  background: url('./assets/app_logo.svg') no-repeat left 10px;
   background-size: 36px 36px;
   padding: 10px 45px 10px
 }
@@ -668,8 +668,8 @@ div.data-sync {
 }
 
 .app_title {
-  padding: 9px 10px 10px 45px;
-  font-size: 1.0em;
+  padding: 9px 5px 10px 45px;
+  font-size: 0.98em;
 }
 
 </style>
