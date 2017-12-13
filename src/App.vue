@@ -98,8 +98,8 @@ import {
   QItemSide,
   QItemMain,
   QTransition,
-  QSlideTransition
-
+  QSlideTransition,
+  Dialog
 } from 'quasar'
 
 import photoUtil from './photoUtil.js'
@@ -464,7 +464,23 @@ export default {
           })
           .catch(function (error) {
             console.error(error)
-            Vue.store.queueSetRunning(false)
+            if (error.response.status === 410) {
+              Dialog.create({
+                title: 'Error!',
+                message: 'La feina que s\'està sincronitzant ja no existeix. Si heu estat notificats podeu esborrar els canvis que no s\'han sincronitzat. Altrament informeu de l\'error.',
+                buttons: [
+                  {
+                    label: 'Sí, esborrar',
+                    handler () {
+                      Vue.store.queueRemoveJob(job.id)
+                      Vue.store.jobsRemove(job.id)
+                      Vue.store.queueSetRunning(false)
+                    }
+                  },
+                  'És un error'
+                ]
+              })
+            }
           })
       }
       else {
@@ -580,8 +596,23 @@ export default {
               photoUtil.deleteBlob(src, photo.name)
             })
             .catch(function (error) {
-              console.log(error)
-              Vue.store.queueSetRunning(false)
+              console.error(error)
+              if (error.response.status === 410) {
+                Dialog.create({
+                  title: 'Error!',
+                  message: 'La photo que s\'està sincronitzant pertany a una feina que ja no existeix. Si heu estat notificats podeu esborrar els canvis que no s\'han sincronitzat. Altrament informeu de l\'error.',
+                  buttons: [
+                    {
+                      label: 'Sí, esborrar',
+                      handler () {
+                        Vue.store.queueRemovePhoto(photo.id)
+                        Vue.store.queueSetRunning(false)
+                      }
+                    },
+                    'És un error'
+                  ]
+                })
+              }
             })
         })
       }
