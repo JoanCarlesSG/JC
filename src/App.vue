@@ -464,7 +464,7 @@ export default {
           })
           .catch(function (error) {
             console.error(error)
-            if (error.response.status === 410) {
+            if (error.response && error.response.status === 410) {
               Dialog.create({
                 title: 'Error!',
                 message: 'La feina que s\'està sincronitzant ja no existeix. Si heu estat notificats podeu esborrar els canvis que no s\'han sincronitzat. Altrament informeu de l\'error.',
@@ -597,7 +597,7 @@ export default {
             })
             .catch(function (error) {
               console.error(error)
-              if (error.response.status === 410) {
+              if (error.response && error.response.status === 410) {
                 Dialog.create({
                   title: 'Error!',
                   message: 'La photo que s\'està sincronitzant pertany a una feina que ja no existeix. Si heu estat notificats podeu esborrar els canvis que no s\'han sincronitzat. Altrament informeu de l\'error.',
