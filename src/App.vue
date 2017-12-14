@@ -587,7 +587,7 @@ export default {
                 Vue.store.jobsSave()
               }
               img.onerror = img.onload
-              img.src = jobphoto.photo
+              img.src = jobphoto.photo + '?access_token=' + self.sharedState.access_token
               console.log('Load ' + img.src)
 
               Vue.store.queueRemovePhoto(photo.id)
