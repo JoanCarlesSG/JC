@@ -244,14 +244,8 @@ var store = {
           job._is_remote = true
         }
       }
-      else {
-        // replace local object with remote object
-        console.log('No pending changes, use remote data')
-        Vue.delete(this.state.jobs, jobId)
-        job = undefined
-      }
 
-      if (!job) {
+      if (!job || !queuedJob) {
         console.log('Adding job ' + jobId)
         // add
         job = {
@@ -274,26 +268,28 @@ var store = {
         }
 
         remoteJob.photos.forEach(remotePhoto => {
+          console.log('remotePhoto', remotePhoto)
           let photo = self.state.photoCache[remotePhoto.id]
-          let isNew = false
+          console.log('photoCache', photo)
           if (!photo) {
             photo = {
               id: remotePhoto.id,
               job_id: remotePhoto.job
             }
-            isNew = true
           }
           photo.src = remotePhoto.photo
           photo.description = remotePhoto.description
           photo.taken_on = remotePhoto.taken_on
           photo.type = remotePhoto.photo_type
 
-          if (isNew) {
+          if (!_.includes(job.photos, photo)) {
+            console.log('add new photo', photo)
             job.photos.push(photo)
           }
         })
 
         this.jobsAdd(job)
+        console.log('Added job ', job)
         // set as new startup data
         self.state.startup.jobs[jobId] = remoteJob
       }
