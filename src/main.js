@@ -172,7 +172,9 @@ var store = {
         startupJob = self.state.startup.jobs[jobId]
       }
 
-      if (startupJob) {
+      let queuedJob = self.queueGetJob(jobId) || false
+
+      if (startupJob && queuedJob) {
         // compare new and orig
         let equal = Vue._.isEqual(remoteJob, startupJob)
         console.log('equals: ', equal)
@@ -241,6 +243,12 @@ var store = {
         if (job) {
           job._is_remote = true
         }
+      }
+      else {
+        // replace local object with remote object
+        console.log('No pending changes, use remote data')
+        Vue.delete(this.state.jobs, jobId)
+        job = undefined
       }
 
       if (!job) {
