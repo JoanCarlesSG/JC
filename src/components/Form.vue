@@ -445,6 +445,9 @@ export default {
         this.needsSave = true
         let now = this.$moment()
         this.model.updated_on = now.toISOString()
+        if (this.model.status === 'pending') {
+          this.model.status = 'open'
+        }
         this.modelSave()
       }
     },
