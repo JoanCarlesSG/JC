@@ -137,68 +137,23 @@ export default {
       console.log(e)
     }
   },
+  mounted () {
+    this.fetchStartupData()
+  },
   watch: {
     // call again the method if the route changes
     '$route': 'routeChanged'
   },
   methods: {
     refresh () {
-      console.log('Refreshing data...')
-      this.loading = true
-      this.sharedState.errors = []
-
-      var config = {
-        headers: {'Authorization': 'Bearer '.concat(this.sharedState.access_token)},
-        timeout: 10000,
-        params: {
-          '_version': Vue.APP_VERSION,
-          '_username': this.sharedState.username
-        }
-      }
-
-      let self = this
-      // Fetches posts when the component is created.
-      this.axios.get(Vue.API_ROOT + '/ajgirona/feines_proveidors/startup', config)
-        .then(response => {
-          console.log('startup response ok')
-          // JSON responses are automatically parsed.
-          self.loadStartupData(response.data, true)
-
-          console.log(self.startup)
-          // Save startup cache
-          Vue.store.localStore.save({key: 'startup', data: self.startup})
-          console.log('startup cache saved')
-          self.sharedState.currentView.jobsChanged()
-          self.loading = false
-        })
-        .catch(e => {
-          console.log(e)
-          if (e.request.status === 403) {
-            self.loading = false
-            self.$router.replace('/login')
-          }
-          else {
-            console.log('startup response ERROR')
-            let message
-            if (e.message) {
-              message = e.message
-            }
-            else {
-              message = 'Error al contactar el servidor'
-            }
-            self.sharedState.errors.push(message)
-            console.log(self.sharedState.errors)
-            self.loading = false
-          }
-        })
+      this.fetchStartupData()
     },
     logout () {
-      console.log('woooop')
+      console.log('logout')
       this.$router.push('/logout')
       this.$refs.layout.hideCurrentSide()
     },
     routeChanged () {
-      let self = this
       console.log(this.$route.path)
 
       // if (this.$route.path === '/') {
@@ -222,173 +177,55 @@ export default {
         this.loading = false
         this.$router.replace('/login')
         console.log('Needs login')
-        return
-      }
-
-      console.log('Fetch data?')
-      if (this.startup == null) {
-        console.log('Fetching data...')
-        this.loading = true
-
-        var config = {
-          headers: {'Authorization': 'Bearer '.concat(this.sharedState.access_token)},
-          timeout: 10000,
-          params: {
-            '_version': Vue.APP_VERSION,
-            '_username': this.sharedState.username
-          }
-        }
-
-        // Fetches posts when the component is created.
-        this.axios.get(Vue.API_ROOT + '/ajgirona/feines_proveidors/startup', config)
-          .then(response => {
-            console.log('startup response ok')
-            // JSON responses are automatically parsed.
-            self.loadStartupData(response.data, true)
-
-            console.log(self.startup)
-            // Save startup cache
-            Vue.store.localStore.save({key: 'startup', data: self.startup})
-            console.log('startup cache saved')
-            self.loading = false
-          })
-          .catch(e => {
-            console.log(e)
-            if (e.request && e.request.status === 403) {
-              self.loading = false
-              self.$router.replace('/login')
-            }
-            else {
-              console.log('startup response ERROR')
-              self.errors.push(e)
-              console.log(self.errors)
-              self.loading = false
-              Vue.store.localStore.get('startup', function (me) {
-                console.log('startup cache')
-                self.loadStartupData(me.data)
-                self.loading = false
-              })
-            }
-          })
       }
     },
-    loadStartupData (startup, newJobs) {
-      console.log('startup data: ', startup)
-      this.startup = startup
-      Vue.set(this.sharedState, 'username', startup.username)
-      this.sharedState.contracts = startup.contracts
-      this.sharedState.elementTypes = startup.element_types
-      this.sharedState.elementGroups = startup.element_groups
-      this.sharedState.elementTasks = startup.element_tasks
-      console.log('Startup data loaded')
-
-      var photoCache = {}
-
+    fetchStartupData () {
       let self = this
-      Vue.store.localStore.get('jobs', function (jobs) {
-        console.log('saved jobs')
-        console.log(jobs)
-        if (jobs) {
-          Vue._.forEach(jobs.data, function (job) {
-            if (!job) {
-              return
-            }
-            job._is_remote = false
-            console.log('Adding job ' + job.id)
-            self.sharedState.jobs[job.id] = job
-            job.photos.forEach(photo => {
-              photoUtil.getBlob(photo, function (blob) {
-                photo.src = URL.createObjectURL(blob)
-              })
-              photoCache[photo.id] = photo
-            })
-            if (!job.updated_on) {
-              job.updated_on = 0
-            }
-          })
+      console.log('Fetching remote data...')
+      this.loading = true
+
+      var config = {
+        headers: {'Authorization': 'Bearer '.concat(this.sharedState.access_token)},
+        timeout: 10000,
+        params: {
+          '_version': Vue.APP_VERSION,
+          '_username': this.sharedState.username
         }
-      })
-
-      if (newJobs) {
-        startup.jobs.forEach(remoteJob => {
-          let job = self.sharedState.jobs[remoteJob.id]
-
-          if (!job) {
-            job = {
-              id: remoteJob.id,
-              photos: []
-            }
-          }
-
-          job._is_remote = true
-
-          job.contract = remoteJob.contract
-          job.elementType = remoteJob.element_type
-          job.location = remoteJob.element_group
-          job.task = remoteJob.element_task
-          job.quantity = remoteJob.quantity
-          job.note = remoteJob.note
-          Vue.set(job, 'status', remoteJob.status)
-          job.created_on = remoteJob.created_on
-          if (remoteJob.updated_on > job.updated_on) {
-            Vue.set(job, 'updated_on', remoteJob.updated_on)
-          }
-
-          console.log('remotejob photos: ' + remoteJob.photos.length)
-
-          remoteJob.photos.forEach(remotePhoto => {
-            let photo = photoCache[remotePhoto.id]
-            let isNew = false
-            if (!photo) {
-              photo = {
-                id: remotePhoto.id,
-                job_id: remotePhoto.job
-              }
-              isNew = true
-            }
-            photo.src = remotePhoto.photo
-            photo.description = remotePhoto.description
-            photo.taken_on = remotePhoto.taken_on
-            photo.type = remotePhoto.photo_type
-
-            if (isNew) {
-              job.photos.push(photo)
-            }
-          })
-
-          Vue.set(self.sharedState.jobs, job.id, job)
-        })
-
-        // check if jobs are still valid on the server
-        Vue._.forEach(this.sharedState.jobs, function (job) {
-          if (!job._is_remote && job.id > 0) {
-            // the job has been deleted on the server
-            Vue.store.jobsRemove(job.id)
-            Vue.store.queueRemoveJob(job.id)
-          }
-        })
       }
 
-      Vue.store.localStore.get('queue', function (queue) {
-        console.log('saved queue')
-        console.log(queue)
-        if (queue) {
-          queue.data.jobs.forEach(queuedJob => {
-            let job = self.sharedState.jobs[queuedJob.id]
-            self.sharedState.queue.jobs.push(job)
-          })
-          queue.data.photos.forEach(photo => {
-            let cachedPhoto = photoCache[photo.id]
-            if (cachedPhoto) {
-              self.sharedState.queue.photos.push(cachedPhoto)
+      // Fetches posts when the component is created.
+      this.axios.get(Vue.API_ROOT + '/ajgirona/feines_proveidors/startup', config)
+        .then(response => {
+          console.log('startup response ok')
+          // JSON responses are automatically parsed.
+          Vue.store.startupLoadReferenceData(response.data)
+          Vue.store.startupProcess(response.data)
+
+          // Save startup cache
+          Vue.store.stateSave()
+          console.log('startup cache saved')
+          self.loading = false
+        })
+        .catch(e => {
+          console.log(e)
+          if (e.request && e.request.status === 403) {
+            self.loading = false
+            self.$router.replace('/login')
+          }
+          else {
+            console.log('startup response ERROR')
+            let message
+            if (e.message) {
+              message = e.message
             }
             else {
-              console.error('photo not found when loading queue')
-              console.error(photo)
+              message = 'Error al contactar el servidor'
             }
-          })
-        }
-      })
+            self.sharedState.errors.push(message)
+            console.log(self.sharedState.errors)
+            self.loading = false
+          }
+        })
     },
     queueCheck () {
       console.log('Queue CHECK! -> running? ' + this.sharedState.queue.running)
@@ -639,7 +476,7 @@ export default {
 .q-btn.q-btn-rectangle.bg-micro {
   color: #fff;
   background: #3b8ac3;
-  
+
 }
 
 .q-btn.q-btn-rectangle.photo-small {

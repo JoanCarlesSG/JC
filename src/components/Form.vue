@@ -369,6 +369,7 @@ export default {
         console.log(vm.sharedState.jobs)
         if (vm.sharedState.jobs[to.params.id]) {
           vm.model = vm.sharedState.jobs[to.params.id]
+          console.log('model', vm.model)
           if (!vm.model.photos) {
             vm.model.photos = []
           }
@@ -443,7 +444,7 @@ export default {
         console.debug('Model has changed!!!')
         this.needsSave = true
         let now = this.$moment()
-        this.model.updated_on = now.valueOf()
+        this.model.updated_on = now.toISOString()
         this.modelSave()
       }
     },
