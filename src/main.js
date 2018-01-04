@@ -32,6 +32,13 @@ import axios from 'axios'
 import VueAxios from 'vue-axios'
 Vue.use(VueAxios, axios)
 
+console.log('environment:', process.env.NODE_ENV)
+
+import mockapi from './mockapi'
+if (process.env.NODE_ENV === 'test') {
+  mockapi.activate()
+}
+
 import _ from 'lodash'
 import VueLodash from 'vue-lodash'
 Vue.use(VueLodash, _)

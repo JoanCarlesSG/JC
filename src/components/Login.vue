@@ -36,7 +36,7 @@
                @enter="login"
                />
 
-      <q-btn color="micro" @click="login">Log in</q-btn>
+      <q-btn id="login-button" color="micro" @click="login">Log in</q-btn>
     </div>
 
   </div>

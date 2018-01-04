@@ -193,7 +193,7 @@ export default {
         }
       }
 
-      // Fetches posts when the component is created.
+      console.log('Fetching startup data')
       this.axios.get(Vue.API_ROOT + '/ajgirona/feines_proveidors/startup', config)
         .then(response => {
           console.log('startup response ok')

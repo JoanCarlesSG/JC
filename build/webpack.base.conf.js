@@ -21,7 +21,7 @@ module.exports = {
   },
   output: {
     path: path.resolve(__dirname, '../dist'),
-    publicPath: config[env.prod ? 'build' : 'dev'].publicPath,
+    publicPath: config[env.prod ? 'build' : (env.dev ? 'dev' : 'test')].publicPath,
     filename: 'js/[name].js',
     chunkFilename: 'js/[id].[chunkhash].js'
   },
@@ -86,8 +86,9 @@ module.exports = {
   },
   plugins: [
     new webpack.DefinePlugin({
-      'process.env': config[env.prod ? 'build' : 'dev'].env,
+      'process.env': config[env.prod ? 'build' : (env.dev ? 'dev' : 'test')].env,
       'DEV': env.dev,
+     'TEST': env.test,
       'PROD': env.prod,
       '__THEME': '"' + env.platform.theme + '"'
     }),
