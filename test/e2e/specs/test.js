@@ -1,5 +1,6 @@
 // For authoring Nightwatch tests, see
 // http://nightwatchjs.org/guide#usage
+// http://nightwatchjs.org/api/
 
 function do_login(browser) {
   const devServer = browser.globals.devServerURL

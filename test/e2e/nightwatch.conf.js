@@ -28,10 +28,18 @@ module.exports = {
     },
 
     chrome: {
+      // https://sites.google.com/a/chromium.org/chromedriver/capabilities
+      silent: true,
       desiredCapabilities: {
         browserName: 'chrome',
         javascriptEnabled: true,
-        acceptSslCerts: true
+        acceptSslCerts: true,
+        chromeOptions: {
+          'args': ['incognito', 'disable-extensions', 'auto-open-devtools-for-tabs'],
+          // 'mobileEmulation': {
+          //   'deviceName': 'Galaxy S5'
+          // },
+        }
       }
     },
 
