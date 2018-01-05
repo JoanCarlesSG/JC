@@ -44,6 +44,7 @@
 
 <script>
 import Vue from 'vue'
+import axios from 'axios'
 
 import {
   QInput,
@@ -85,15 +86,17 @@ export default {
       data.append('_username', this.sharedState.username)
 
       var self = this
-      this.axios.post(url, data, { timeout: 5000 })
+      axios.post(url, data, { timeout: 5000 })
         .then(function (response) {
           console.log(response.data)
           self.sharedState.access_token = response.data.access_token
           Vue.store.stateSave()
           // self.$router.go(-1)
           self.loading = false
-          console.log('push("/"')
+          console.log('replace("/"')
           self.$router.replace('/')
+          // send refresh signal, it will force getting startup data
+          self.$emit('refresh')
         })
         .catch(function (error) {
           console.log(error)

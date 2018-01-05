@@ -86,6 +86,9 @@ var store = {
   },
   localStore: new Lawnchair(),
 
+  isUserLoggedIn: function () {
+    return this.state.access_token && this.state.access_token.length > 0
+  },
   stateSave: function () {
     console.log('stateSave', this.state.username, this.state.startup)
     this.localStore.save({key: 'access_token', data: this.state.access_token})
@@ -96,7 +99,7 @@ var store = {
     let self = this
     this.localStore.get('startup', function (startup) {
       console.log('startup cache', startup)
-      if (startup.data) {
+      if (startup && startup.data) {
         self.state.startup = startup.data
         self.startupLoadReferenceData(startup.data)
       }
@@ -358,7 +361,12 @@ var store = {
   },
   queueGetJob: function (jobId) {
     return Vue._.find(this.state.queue.jobs, function (job) {
-      return job.id === jobId
+      if (job) {
+        return job.id === jobId
+      }
+      else {
+        return false
+      }
     })
   },
   queueAddJob: function (job) {

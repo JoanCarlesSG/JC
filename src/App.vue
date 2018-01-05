@@ -129,6 +129,7 @@ export default {
     }
   },
   created: function () {
+    console.log('App created')
     try {
       Vue.store.stateLoad()
       this.sharedState.queueCheckId = setInterval(this.queueCheck, 10000)
@@ -138,7 +139,13 @@ export default {
     }
   },
   mounted () {
-    this.fetchStartupData()
+    console.log('App mounted')
+    if (Vue.store.isUserLoggedIn()) {
+      this.fetchStartupData()
+    }
+    else {
+      this.$router.replace('/login')
+    }
   },
   watch: {
     // call again the method if the route changes
@@ -196,7 +203,7 @@ export default {
       console.log('Fetching startup data')
       this.axios.get(Vue.API_ROOT + '/ajgirona/feines_proveidors/startup', config)
         .then(response => {
-          console.log('startup response ok')
+          console.log('startup response ok', response)
           // JSON responses are automatically parsed.
           Vue.store.startupLoadReferenceData(response.data)
           Vue.store.startupProcess(response.data)
