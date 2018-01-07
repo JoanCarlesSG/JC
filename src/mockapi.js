@@ -200,9 +200,23 @@ export default {
       }]
     })
 
+    // mock.onPost(
+    //   Vue.API_ROOT + '/ajgirona/feines_proveidors/api/v1/jobs/'
+    // ).reply(
+    //
+    // )
+
     // catch-all
     mock.onAny().reply(function (config) {
       console.log('URL not handled:', config.method, config.url)
+      if (config.data instanceof FormData) {
+        for (var pair of config.data.entries()) {
+          console.log('form data:', pair[0] + ', ' + pair[1])
+        }
+      }
+      else {
+        console.log('DATA:', config.data)
+      }
       return [404, {}]
     })
   }

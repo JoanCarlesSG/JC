@@ -1,7 +1,7 @@
 <template>
 <div>
   <q-fixed-position corner="bottom-right" :offset="[18, 18]" style="z-index: 500">
-    <q-btn round color="primary" @click="add_job" icon="add"/>
+    <q-btn id="add-button" round color="primary" @click="add_job" icon="add"/>
   </q-fixed-position>
 
   <q-pull-to-refresh :handler="refresher"

@@ -20,6 +20,48 @@ function do_login(browser) {
 }
 
 module.exports = {
+  'login': function (browser) {
+    // automatically uses dev Server port from /config.index.js
+    // default: http://localhost:8080
+    // see nightwatch.conf.js
+    const devServer = browser.globals.devServerURL
+
+    do_login(browser)
+
+    browser
+      .click('#add-button')
+      .waitForElementVisible('.q-tabs-head', 5000)
+
+    browser
+      .click('#element-type')
+      .pause(500)
+      .click('.q-popover .q-item:nth-child(1)')
+
+    browser
+      .click('#element-group')
+      .pause(500)
+      .click('.q-popover .q-item:nth-child(1)')
+
+    browser
+      .click('#element-task')
+      .pause(500)
+      .click('.q-popover .q-item:nth-child(1)')
+
+    browser
+      .setValue('#quantity input', 3)
+
+    browser
+      .setValue('#note textarea', 'test')
+
+    browser
+      .pause(500)
+      .click('.q-toolbar-title')
+
+    browser.click('#close-button')
+    browser.pause(1000000)
+
+    browser.end()
+  },
   'bad login, then good login': function (browser) {
     // automatically uses dev Server port from /config.index.js
     // default: http://localhost:8080
@@ -55,18 +97,6 @@ module.exports = {
       .click('#login-button')
       .waitForElementVisible('.pull-to-refresh .q-list-header', 50000)
       .assert.containsText('.pull-to-refresh .q-list-header', 'Feines')
-
-    browser.end()
-  },
-  'login': function (browser) {
-    // automatically uses dev Server port from /config.index.js
-    // default: http://localhost:8080
-    // see nightwatch.conf.js
-    const devServer = browser.globals.devServerURL
-
-    do_login(browser)
-
-    browser.pause(100000)
 
     browser.end()
   }

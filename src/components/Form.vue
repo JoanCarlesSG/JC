@@ -22,6 +22,7 @@
     />
 
     <q-select
+    id='element-type'
     v-model="model.elementType"
     float-label="Tipus de verd"
     :options="elementTypeOptions"
@@ -32,6 +33,7 @@
 <div style="display: flex; align-items: center"
      v-show="showLocationOptions">
     <q-select
+      id='element-group'
       filter
       ref="sectorSelect"
       v-model="model.location"
@@ -67,6 +69,7 @@
 </div>
 
     <q-select
+      id='element-task'
       ref="tascaSelect"
       v-model="model.task"
       float-label="Tasca"
@@ -75,6 +78,7 @@
     />
 
     <q-input
+      id='quantity'
       v-model="model.quantity"
       :float-label="quantitatLabel"
       type="number"
@@ -82,6 +86,7 @@
     />
 
     <q-input
+      id='note'
       v-model="model.note"
       type="textarea"
       float-label="Observacions"
@@ -91,7 +96,7 @@
     />
 
     <div v-if="model.status != 'done'" style="justify-content: space-between; margin: 40px 0px 5px 0px; text-align: right">
-      <q-btn small color="micro" icon="done" @click="tancarTasca" sytle="margin-left: auto;">Tancar tasca</q-btn>
+      <q-btn id="close-button" small color="micro" icon="done" @click="tancarTasca" sytle="margin-left: auto;">Tancar tasca</q-btn>
     </div>
     <div v-if="model.status == 'done'" style="justify-content: space-between; margin: 40px 0px 5px 0px; text-align: left">
       <q-btn small color="micro" icon="create" @click="reobrirTasca" sytle="margin-right: auto;">Reobrir tasca</q-btn>
