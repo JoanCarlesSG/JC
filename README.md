@@ -16,6 +16,10 @@ $ quasar build
 
 # lint code
 $ quasar lint
+
+# run e2e tests
+npm run e2e
+
 ```
 
 ## Cordova

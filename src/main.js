@@ -273,6 +273,9 @@ var store = {
         job.note = remoteJob.note
         Vue.set(job, 'status', remoteJob.status)
         job.created_on = remoteJob.created_on
+        if (!job.updated_on) {
+          Vue.set(job, 'updated_on', '')
+        }
         if (remoteJob.updated_on > job.updated_on) {
           Vue.set(job, 'updated_on', remoteJob.updated_on)
         }

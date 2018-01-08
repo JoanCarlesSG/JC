@@ -336,8 +336,8 @@ export default {
           status: 'open'
         }
         let now = vm.$moment()
-        vm.model.created_on = now.valueOf()
-        vm.model.id = -vm.model.created_on
+        vm.model.created_on = now.toISOString()
+        vm.model.id = -now.valueOf()
         vm.model.updated_on = vm.model.created_on
 
         Vue.store.jobsAdd(vm.model)
