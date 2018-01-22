@@ -102,7 +102,7 @@ var store = {
   stateLoad: function () {
     let self = this
     this.localStore.get('startup', function (startup) {
-      console.log('startup cache', startup)
+      console.log('stateLoad: load startup cache', startup)
       if (startup && startup.data) {
         self.state.startup = startup.data
         self.startupLoadReferenceData(startup.data)
@@ -142,7 +142,7 @@ var store = {
 
     // load jobs from local cache
     this.localStore.get('jobs', function (jobs) {
-      console.log('saved jobs', jobs)
+      console.log('stateLoad: load saved jobs', jobs)
       if (jobs) {
         Vue._.forEach(jobs.data, function (job) {
           if (!job) {
