@@ -175,6 +175,7 @@ var store = {
     this.state.elementTypes = startup.element_types
     this.state.elementGroups = startup.element_groups
     this.state.elementTasks = startup.element_tasks
+    this.state.startup = startup
   },
   startupProcess: function (startup) {
     let self = this
