@@ -132,6 +132,7 @@ export default {
     console.log('App created')
     try {
       Vue.store.stateLoad()
+      console.log('Start queue thread')
       this.sharedState.queueCheckId = setInterval(this.queueCheck, 10000)
     }
     catch (e) {
@@ -326,6 +327,9 @@ export default {
                 ]
               })
             }
+            else {
+              Vue.store.queueSetRunning(false)
+            }
           })
       }
       else {
@@ -391,7 +395,6 @@ export default {
                 Vue.store.queueRemovePhoto(photo.id)
               }
               Vue.store.queueSetRunning(false)
-              self.queueCheck()
             })
         }
         else {
@@ -457,6 +460,9 @@ export default {
                     'És un error'
                   ]
                 })
+              }
+              else {
+                Vue.store.queueSetRunning(false)
               }
             })
         })
