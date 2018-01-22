@@ -109,26 +109,6 @@ var store = {
       }
     })
 
-    this.localStore.get('queue', function (queue) {
-      console.log('saved queue', queue)
-      if (queue) {
-        queue.data.jobs.forEach(queuedJob => {
-          let job = self.state.jobs[queuedJob.id]
-          self.state.queue.jobs.push(job)
-        })
-        queue.data.photos.forEach(photo => {
-          let cachedPhoto = self.state.photoCache[photo.id]
-          if (cachedPhoto) {
-            self.state.queue.photos.push(cachedPhoto)
-          }
-          else {
-            console.error('photo not found when loading queue')
-            console.error(photo)
-          }
-        })
-      }
-    })
-
     this.localStore.get('access_token', function (accessToken) {
       if (accessToken) {
         self.state.access_token = accessToken.data
@@ -160,6 +140,30 @@ var store = {
           })
           if (!job.updated_on) {
             job.updated_on = 0
+          }
+        })
+      }
+    })
+
+    this.localStore.get('queue', function (queue) {
+      console.log('saved queue', queue)
+      if (queue) {
+        queue.data.jobs.forEach(queuedJob => {
+          if (!queuedJob) {
+            console.log('ERROR: queuedJob not valid:', queuedJob)
+            return
+          }
+          let job = self.state.jobs[queuedJob.id]
+          self.state.queue.jobs.push(job)
+        })
+        queue.data.photos.forEach(photo => {
+          let cachedPhoto = self.state.photoCache[photo.id]
+          if (cachedPhoto) {
+            self.state.queue.photos.push(cachedPhoto)
+          }
+          else {
+            console.error('photo not found when loading queue')
+            console.error(photo)
           }
         })
       }
