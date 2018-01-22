@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.8.3
+-----
+- Carregar correctament les feines al inici si s'ha produït un error de
+  sincronització
+- Millorat l'estat de la sincronització quan no hi ha connexió al servidor
+
 0.8.2
 -----
 - Feines sempre ordenades per data de modificació
