@@ -34,14 +34,18 @@ Vue.use(VueAxios, axios)
 
 console.log('environment:', process.env.NODE_ENV)
 
+import test from './test'
+window.test = test
 import mockapi from './mockapi'
 if (process.env.NODE_ENV === 'test') {
+  window.CircularJSON = require('circular-json')
   mockapi.activate()
 }
 
 import _ from 'lodash'
 import VueLodash from 'vue-lodash'
 Vue.use(VueLodash, _)
+window._ = _
 
 Vue.config.productionTip = false
 Vue.use(Quasar) // Install Quasar Framework

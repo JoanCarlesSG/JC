@@ -71,7 +71,7 @@
       </q-transition>
 
       <keep-alive>
-        <router-view v-if="!loading" class="layout-view"
+        <router-view ref="view" v-if="!loading" class="layout-view"
           @refresh="refresh"></router-view>
       </keep-alive>
 
@@ -140,6 +140,7 @@ export default {
   },
   mounted () {
     console.log('App mounted')
+    window.app = this
     if (Vue.store.isUserLoggedIn()) {
       this.fetchStartupData()
     }

@@ -2,7 +2,28 @@
 // http://nightwatchjs.org/guide#usage
 // http://nightwatchjs.org/api/
 
-function do_login(browser) {
+// var _ = require('lodash')
+
+function navigateToApp (browser) {
+  // automatically uses dev Server port from /config.index.js
+  // default: http://localhost:8080
+  // see nightwatch.conf.js
+  const devServer = browser.globals.devServerURL
+  browser.url(devServer)
+}
+
+function doFakeLogin (browser) {
+  let state = {
+    access_token: 'aczsGCgoTETcxEP8kvCz9RGslWf1Ug',
+    username: 'manel.clos@ajgirona.cat',
+    version: 60
+  }
+
+  sendState(browser, state)
+  navigateToApp(browser)
+}
+
+function doLogin (browser) {
   const devServer = browser.globals.devServerURL
   const email = 'manel.clos@ajgirona.cat'
 
@@ -19,14 +40,41 @@ function do_login(browser) {
     .assert.containsText('.pull-to-refresh .q-list-header', 'Feines')
 }
 
-module.exports = {
-  'login': function (browser) {
-    // automatically uses dev Server port from /config.index.js
-    // default: http://localhost:8080
-    // see nightwatch.conf.js
-    const devServer = browser.globals.devServerURL
+function sendState(browser, state) {
+  browser
+    .waitForElementVisible('#q-app', 5000)
+    .execute(function(state) {
+    window._.forOwn(state, function(value, key) {
+      console.log('key', key, 'value', value)
+      window.store.state[key] = value
+    })
+    window.store.stateSave()
 
-    do_login(browser)
+    return window.CircularJSON.stringify(window.store.state)
+  }, [state], function(result) {
+    console.log('STATE: ', result)
+  })
+}
+
+module.exports = {
+  'add photo': function (browser) {
+    navigateToApp(browser)
+    doFakeLogin(browser)
+
+    browser.execute(function(data) {
+      window.test.test_add_photo()
+      return 'ok'
+    }, ['hello'], function(result) {
+      console.log('RESULT: ', result)
+    })
+
+    browser.pause(1000000)
+  },
+  'login': function (browser) {
+    navigateToApp(browser)
+    doLogin(browser)
+
+    browser.pause(10000)
 
     browser
       .click('#add-button')
@@ -57,7 +105,14 @@ module.exports = {
       .pause(500)
       .click('.q-toolbar-title')
 
-    browser.click('#close-button')
+    // browser.click('#close-button')
+    browser.pause(1000)
+
+    browser.execute(function(data) {
+      return window.CircularJSON.stringify(window.store.state.jobs)
+    }, ['hello'], function(result) {
+      console.log('RESULT: ', result)
+    })
     browser.pause(1000000)
 
     browser.end()
