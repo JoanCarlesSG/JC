@@ -554,7 +554,7 @@ export default {
       Vue.store.queueDeletePhoto(photo)
     },
     getSectorImage: function () {
-      return Vue.API_ROOT + '/ajgirona/feines_proveidors/static/sectors/' + this.currentGroup.code + '.jpg'
+      return Vue.API_ROOT + '/static/sectors/' + this.currentGroup.code + '.jpg'
     }
   }
 }

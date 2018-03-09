@@ -203,7 +203,7 @@ export default {
       }
 
       console.log('Fetching startup data')
-      this.axios.get(Vue.API_ROOT + '/ajgirona/feines_proveidors/startup', config)
+      this.axios.get(Vue.API_ROOT + '/startup', config)
         .then(response => {
           console.log('startup response ok', response)
           // JSON responses are automatically parsed.
@@ -298,7 +298,7 @@ export default {
 
       if (job.id > 0) {
         // Existing job, update
-        let url = Vue.API_ROOT + '/ajgirona/feines_proveidors/api/v1/jobs/' + job.id + '/'
+        let url = Vue.API_ROOT + '/api/v1/jobs/' + job.id + '/'
 
         this.axios.put(url, data, config)
           .then(function (response) {
@@ -334,7 +334,7 @@ export default {
       }
       else {
         // New job, add
-        let url = Vue.API_ROOT + '/ajgirona/feines_proveidors/api/v1/jobs/'
+        let url = Vue.API_ROOT + '/api/v1/jobs/'
 
         this.axios.post(url, data, config)
           .then(function (response) {
@@ -365,7 +365,7 @@ export default {
         timeout: 60000
       }
 
-      var url = Vue.API_ROOT + '/ajgirona/feines_proveidors/api/v1/jobphotos/'
+      var url = Vue.API_ROOT + '/api/v1/jobphotos/'
       const data = new FormData()
       data.append('job', photo.job_id)
       data.append('description', photo.description)
@@ -379,7 +379,7 @@ export default {
         // Existing job
         if (photo._delete) {
           console.log('Delete existing photo', photo)
-          url = Vue.API_ROOT + '/ajgirona/feines_proveidors/api/v1/jobphotos/' + photo.id + '/'
+          url = Vue.API_ROOT + '/api/v1/jobphotos/' + photo.id + '/'
 
           self.axios.delete(url, config)
             .then(function (response) {

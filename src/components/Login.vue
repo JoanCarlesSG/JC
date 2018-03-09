@@ -76,7 +76,7 @@ export default {
       this.loading = true
       this.errors = []
       console.log('LOGIN!')
-      var url = Vue.API_ROOT + '/ajgirona/feines_proveidors/o/token/'
+      var url = Vue.API_ROOT + '/o/token/'
       const data = new FormData()
       data.append('username', this.username)
       data.append('password', this.password)

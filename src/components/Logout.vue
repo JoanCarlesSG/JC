@@ -75,7 +75,7 @@ export default {
       this.loading = true
       clearInterval(this.sharedState.queueCheckId)
 
-      var url = Vue.API_ROOT + '/ajgirona/feines_proveidors/o/revoke_token/'
+      var url = Vue.API_ROOT + '/o/revoke_token/'
       const data = new FormData()
       data.append('token', this.sharedState.access_token)
       data.append('client_id', 'HrBnfIV54e82dwIeo2heqY4QvJTy0gX56yMpJ5wE')
