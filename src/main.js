@@ -13,7 +13,7 @@ require(`quasar/dist/quasar.${__THEME}.css`)
 import Vue from 'vue'
 
 // Vue.API_ROOT = 'http://xenial.local'
-Vue.API_ROOT = 'https://server3.microdisseny.com'
+Vue.API_ROOT = 'https://server3.microdisseny.com/ajgirona/feines_proveidors'
 Vue.APP_VERSION = '0.8.3'
 
 import moment from 'moment'
