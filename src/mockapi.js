@@ -109,7 +109,7 @@ var username = 'manel.clos@ajgirona.cat'
 var jobs = []
 // {'id': 263, 'contract': 10, 'element_type': 2, 'element_group': 873, 'element_task': 15, 'quantity': 43.86, 'note': '3',
 //  'photos': [
-//    {'id': 425, 'job': 263, 'photo': 'https://server3.microdisseny.com/ajgirona/feines_proveidors/media/job/263/photo/1514366272934.jpg', 'description': 'Foto abans', 'taken_on': '2017-12-27T09:17:52.934000Z', 'photo_type': 'abans'}
+//    {'id': 425, 'job': 263, 'photo': 'https://server3.microdisseny.com/media/job/263/photo/1514366272934.jpg', 'description': 'Foto abans', 'taken_on': '2017-12-27T09:17:52.934000Z', 'photo_type': 'abans'}
 //  ],
 //  'created_on': '2017-12-27T09:17:15.881000Z', 'updated_on': '2017-12-27T09:18:18.056000Z', 'status': 'open'},
 // {'id': 264, 'contract': 11, 'element_type': 1, 'element_group': 897, 'element_task': null, 'quantity': null, 'note': null, 'photos': [], 'created_on': '2017-12-27T09:18:50.481000Z', 'updated_on': '2017-12-27T09:18:56.424000Z', 'status': 'open'}
@@ -164,7 +164,7 @@ export default {
     var mock = new MockAdapter(axios)
 
     mock.onPost(
-      Vue.API_ROOT + '/ajgirona/feines_proveidors/o/token/'
+      Vue.API_ROOT + '/o/token/'
     ).reply(function (config) {
       for (var pair of config.data.entries()) {
         console.log('form data:', pair[0] + ', ' + pair[1])
@@ -189,7 +189,7 @@ export default {
     })
 
     mock.onGet(
-      Vue.API_ROOT + '/ajgirona/feines_proveidors/startup'
+      Vue.API_ROOT + '/startup'
     ).reply(function (config) {
       return [200, {
         'element_types': elementTypes,
@@ -201,7 +201,7 @@ export default {
     })
 
     // mock.onPost(
-    //   Vue.API_ROOT + '/ajgirona/feines_proveidors/api/v1/jobs/'
+    //   Vue.API_ROOT + '/api/v1/jobs/'
     // ).reply(
     //
     // )
