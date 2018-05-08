@@ -1,6 +1,10 @@
 Changelog
 =========
 
+1.0.0
+-----
+- Connexió directa als servidors de l'Ajuntament de Girona
+
 0.8.3
 -----
 - Carregar correctament les feines al inici si s'ha produït un error de
