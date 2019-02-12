@@ -218,8 +218,14 @@ export default {
       return options
     },
     elementTypeOptions: function () {
+      const availableTypes = new Set()
+      if (this.model.contract) {
+        const contract = this.sharedState.contracts.find(contract => contract.id === this.model.contract)
+        contract.groups.forEach(group => group.types.forEach(type => availableTypes.add(type)))
+      }
+
       var options = []
-      this.sharedState.elementTypes.forEach(function (element) {
+      this.sharedState.elementTypes.filter(type => availableTypes.has(type.id)).forEach(function (element) {
         // console.log(element)
         options.push({label: element.name, value: element.id})
       })
