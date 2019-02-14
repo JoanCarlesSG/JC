@@ -265,12 +265,18 @@ export default {
       return options
     },
     taskOptions: function () {
+      const contract = this.sharedState.contracts.find(contract => contract.id === this.model.contract)
+
       var options = []
       var self = this
       if (!this.model.elementType) {
         return options
       }
-      this.sharedState.elementTasks.forEach(function (element) {
+      let tasks = this.sharedState.elementTasks
+      if (contract) {
+        tasks = tasks.filter(task => contract.tasks.includes(task.id))
+      }
+      tasks.forEach(function (element) {
         if (element.types.includes(self.model.elementType)) {
           options.push({label: element.name, value: element.id})
         }
