@@ -1,6 +1,6 @@
 <template>
 <div>
-  <q-fixed-position corner="bottom-right" :offset="[18, 18]" style="z-index: 500">
+  <q-fixed-position v-if="!sharedState.fatalState" corner="bottom-right" :offset="[18, 18]" style="z-index: 500">
     <q-btn id="add-button" round color="primary" @click="add_job" icon="add"/>
   </q-fixed-position>
 
@@ -13,18 +13,26 @@
       <sync />
 
       <q-alert
+        v-for="msg in sharedState.messages"
+        :key="msg.id"
+        :color="alertType(msg.type)"
+        @input="v => { if (!v) dismissMessage(msg) }"
+        :dismissible="!sharedState.fatalState || msg.type !== 'fatal'"
+      >
+        <div class="message" v-html="msg.message"></div>
+      </q-alert>
+
+      <q-alert
         v-for="error in sharedState.errors"
         :key="error"
         type="negative"
         ref="destroyableAlert"
-        enter="bounceInRight"
-        leave="bounceOutLeft"
         dismissible
       >
         {{ error }}
       </q-alert>
 
-      <q-list no-border striped>
+      <q-list v-if="!sharedState.fatalState" no-border striped>
         <q-list-header>Feines</q-list-header>
         <q-alert
           v-if="jobs.length === 0"
@@ -71,6 +79,13 @@ import {
 } from 'quasar'
 
 import Sync from './Sync.vue'
+
+const alertTypeRefs = {
+  info: 'info',
+  warning: 'warning',
+  error: 'negative',
+  fatal: 'negative'
+}
 
 export default {
   name: 'index',
@@ -227,6 +242,13 @@ export default {
       // make some Ajax call then call done()
       this.$emit('refresh')
       done()
+    },
+    alertType (type) {
+      return alertTypeRefs[type]
+    },
+    dismissMessage (msg) {
+      const i = this.sharedState.messages.indexOf(msg)
+      this.sharedState.messages.splice(i, 1)
     }
   },
   mounted () {
@@ -249,4 +271,12 @@ export default {
 .logo
   position absolute
   transform-style preserve-3d
+
+.message a
+  color white
+  font-weight bolder
+
+.bg-info
+  background-color #337ab7 !important
+
 </style>

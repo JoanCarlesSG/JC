@@ -13,6 +13,7 @@ require(`quasar/dist/quasar.${__THEME}.css`)
 import Vue from 'vue'
 
 // Vue.API_ROOT = 'http://xenial.local'
+// Vue.API_ROOT = 'http://127.0.0.1:8000'
 Vue.API_ROOT = 'https://terra.girona.cat/apps/feines_proveidors'
 Vue.APP_VERSION = '1.0.0'
 
@@ -68,6 +69,8 @@ import photoUtil from './photoUtil.js'
 
 var store = {
   state: {
+    messages: [],
+    fatalState: false,
     errors: [],
     startup: {
       jobs: {}
@@ -170,6 +173,22 @@ var store = {
     })
   },
   startupLoadReferenceData: function (startup) {
+    if (startup.messages) {
+      let fatal = false
+      const now = Date.now()
+      startup.messages.forEach((msg, i) => {
+        fatal = fatal || msg.type === 'fatal'
+
+        const found = this.state.messages.some(m => m.type === msg.type && m.message === msg.message)
+        if (!found) {
+          msg.id = 'message-' + i + '@' + now
+          this.state.messages.push(msg)
+        }
+      })
+
+      Vue.set(this.state, 'fatalState', fatal)
+    }
+
     Vue.set(this.state, 'username', startup.username)
     this.state.contracts = startup.contracts
     this.state.elementTypes = startup.element_types
