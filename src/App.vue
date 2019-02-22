@@ -267,6 +267,7 @@ export default {
         headers: {'Authorization': 'Bearer '.concat(this.sharedState.access_token)},
         timeout: 60000
       }
+      const contract = this.sharedState.contracts.find(c => c.id === job.contract)
 
       const data = new FormData()
       if (job.contract) {
@@ -291,6 +292,9 @@ export default {
       }
       if (job.updated_on) {
         data.append('updated_on', this.$moment(job.updated_on).toISOString())
+      }
+      if (contract && contract.is_supervisor && Array.isArray(job.users)) {
+        job.users.forEach(user => data.append('users', user))
       }
 
       data.append('_version', Vue.APP_VERSION)

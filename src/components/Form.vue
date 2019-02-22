@@ -10,6 +10,7 @@
   <q-tab default slot="title" name="tab-fitxa" icon="assignment" />
   <q-tab slot="title" name="tab-fotos" icon="photo" />
   <q-tab slot="title" name="tab-sector" icon="map" />
+  <q-tab v-show="adminPanel" slot="title" name="tab-admin" icon="settings" />
 
   <q-tab-pane name="tab-fitxa" style="padding-top: 0">
   <div>
@@ -126,6 +127,18 @@
     <!-- <img :src="getSectorImage()" style="height: auto; width: 100%" /> -->
   </q-tab-pane>
 
+
+  <q-tab-pane name="tab-admin" style="padding-top: 0">
+    <q-select
+      v-model="users"
+      float-label="Usuaris assignats"
+      :options="selectableUsers"
+      multiple
+      chips
+      filter
+    />
+  </q-tab-pane>
+
 </q-tabs>
   </div>
 </div>
@@ -204,6 +217,25 @@ export default {
     }
   },
   computed: {
+    adminPanel () {
+      return this.contract && this.contract.is_supervisor
+    },
+    contract () {
+      if (this.model.contract === undefined || this.model.contract === null) {
+        return this.model.contract
+      }
+
+      return this.sharedState.contracts.find(contract => contract.id === this.model.contract)
+    },
+    selectableUsers () {
+      const users = this.contract && this.contract.users
+      if (users) {
+        return users.map(({id, username}) => ({value: id, label: username})).sort((a, b) => a.label.localeCompare(b.label))
+      }
+    },
+    users () {
+      return this.model.users
+    },
     readonly: function () {
       return this.model.status === 'done'
     },
@@ -253,28 +285,22 @@ export default {
       if (!this.model.contract || !this.model.elementType) {
         return options
       }
-      this.sharedState.contracts.forEach(function (contract) {
-        if (contract.id === self.model.contract) {
-          contract.groups.forEach(function (element) {
-            if (element.types.includes(self.model.elementType)) {
-              options.push({label: element.name, value: element.id})
-            }
-          })
+      this.contract && this.contract.groups.forEach(function (element) {
+        if (element.types.includes(self.model.elementType)) {
+          options.push({label: element.name, value: element.id})
         }
       })
       return options
     },
     taskOptions: function () {
-      const contract = this.sharedState.contracts.find(contract => contract.id === this.model.contract)
-
       var options = []
       var self = this
       if (!this.model.elementType) {
         return options
       }
       let tasks = this.sharedState.elementTasks
-      if (contract) {
-        tasks = tasks.filter(task => contract.tasks.includes(task.id))
+      if (this.contract) {
+        tasks = tasks.filter(task => this.contract.tasks.includes(task.id))
       }
       tasks.forEach(function (element) {
         if (element.types.includes(self.model.elementType)) {
@@ -305,18 +331,15 @@ export default {
         this.model.note,
         this.model.photos,
         this.model.status,
+        this.model.users,
         new Date())
     },
     currentGroup: function () {
       let self = this
       var group
-      this.sharedState.contracts.forEach(function (contract) {
-        if (contract.id === self.model.contract) {
-          contract.groups.forEach(function (element) {
-            if (element.id === self.model.location) {
-              group = element
-            }
-          })
+      this.contract && this.contract.groups.forEach(function (element) {
+        if (element.id === self.model.location) {
+          group = element
         }
       })
       if (!group) {
@@ -345,6 +368,7 @@ export default {
           quantity: '',
           quantityReadonly: false,
           photos: [],
+          users: [],
           status: 'open'
         }
         let now = vm.$moment()
@@ -389,6 +413,9 @@ export default {
           console.log('model', vm.model)
           if (!vm.model.photos) {
             vm.model.photos = []
+          }
+          if (!vm.model.users) {
+            vm.model.users = []
           }
           vm.needsSave = false
           vm.selectedTab = 'tab-fitxa'

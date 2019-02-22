@@ -212,6 +212,7 @@ var store = {
 
       let queuedJob = self.queueGetJob(jobId) || false
 
+      // if there are changes that have not been pushed to the server, check about differences
       if (startupJob && queuedJob) {
         // compare new and orig
         let equal = Vue._.isEqual(remoteJob, startupJob)
@@ -294,6 +295,7 @@ var store = {
         job._is_remote = true
 
         job.contract = remoteJob.contract
+        job.users = remoteJob.users
         job.elementType = remoteJob.element_type
         job.location = remoteJob.element_group
         job.task = remoteJob.element_task
