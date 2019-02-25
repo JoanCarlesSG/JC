@@ -195,7 +195,7 @@ export default {
 
       var config = {
         headers: {'Authorization': 'Bearer '.concat(this.sharedState.access_token)},
-        timeout: 10000,
+        timeout: 20000,
         params: {
           '_version': Vue.APP_VERSION,
           '_username': this.sharedState.username
