@@ -269,36 +269,22 @@ export default {
       }
       const contract = this.sharedState.contracts.find(c => c.id === job.contract)
 
-      const data = new FormData()
-      if (job.contract) {
-        data.append('contract', job.contract)
-      }
-      if (job.elementType) {
-        data.append('element_type', job.elementType)
-      }
-      if (job.location) {
-        data.append('element_group', job.location)
-      }
-      if (job.task) {
-        data.append('element_task', job.task)
-      }
-      data.append('quantity', job.quantity || '')
-      if (job.note) {
-        data.append('note', job.note)
-      }
-      data.append('status', job.status)
-      if (job.created_on) {
-        data.append('created_on', this.$moment(job.created_on).toISOString())
-      }
-      if (job.updated_on) {
-        data.append('updated_on', this.$moment(job.updated_on).toISOString())
+      const data = {
+        _version: Vue.APP_VERSION,
+        _username: this.sharedState.username,
+        contract: job.contract || null,
+        element_type: job.elementType || null,
+        element_group: job.location || null,
+        element_task: job.task || null,
+        quantity: job.quantity || null,
+        note: job.note,
+        status: job.status,
+        created_on: job.created_on && this.$moment(job.created_on).toISOString(),
+        updated_on: job.updated_on && this.$moment(job.updated_on).toISOString()
       }
       if (contract && contract.is_supervisor && Array.isArray(job.users)) {
-        job.users.forEach(user => data.append('users', user))
+        data['users'] = job.users
       }
-
-      data.append('_version', Vue.APP_VERSION)
-      data.append('_username', this.sharedState.username)
 
       if (job.id > 0) {
         // Existing job, update
