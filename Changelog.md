@@ -1,6 +1,13 @@
 Changelog
 =========
 
+1.0.1
+-----
+- Filtrar els tipus de verd pel lot seleccionat
+- Mostrar només les tasques que estan ofertades
+- Mostrar missatges del servidor (e.g. 'Nova versió disponible')
+- Augmentar el temps disponible per carregar les dades inicials a 20 segons.
+
 1.0.0
 -----
 - Connexió directa als servidors de l'Ajuntament de Girona
