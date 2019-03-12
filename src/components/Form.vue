@@ -137,6 +137,15 @@
       chips
       filter
     />
+    <async-toggle
+      style="margin-top: 2em"
+      :options="{
+        true: 'Deixar de rebre notificacions',
+        false: 'Notificar al tancar'
+      }"
+      :getValue="getNotification"
+      :setValue="setNotification"
+    />
   </q-tab-pane>
 
 </q-tabs>
@@ -165,6 +174,7 @@ import {
   Dialog
 } from 'quasar'
 
+import AsyncToggle from './AsyncToggle.vue'
 import Photos from './Photos.vue'
 import PinchImage from './PinchImage.vue'
 
@@ -184,6 +194,7 @@ export default {
     QCardSeparator,
     QCardMain,
     QIcon,
+    AsyncToggle,
     Photos,
     PinchImage
   },
@@ -213,6 +224,7 @@ export default {
         // Vue.API_ROOT + '/ajgirona/feines_proveidors/static/photos/parallax2.jpg'
       ],
       terms: '',
+      notify: true,
       sharedState: Vue.store.state
     }
   },
@@ -460,6 +472,41 @@ export default {
     'model.elementType': 'modelElementTypeChanged'
   },
   methods: {
+    getNotification () {
+      const config = {
+        headers: {'Authorization': 'Bearer '.concat(this.sharedState.access_token)}
+      }
+      const url = Vue.API_ROOT + '/api/v1/jobs/' + this.model.id + '/notification/'
+      return new Promise((resolve, reject) => {
+        this.axios.get(url, config)
+          .then(response => resolve(response.data.watching))
+          .catch(reject)
+      })
+    },
+    setNotification (value) {
+      const config = {
+        headers: {'Authorization': 'Bearer '.concat(this.sharedState.access_token)}
+      }
+      const url = Vue.API_ROOT + '/api/v1/jobs/' + this.model.id + '/notification/'
+      if (value === true) {
+        return new Promise((resolve, reject) => {
+          this.axios.post(url, {}, config)
+            .then(response => resolve(response.data.watching))
+            .catch(reject)
+        })
+      }
+      else if (value === false) {
+        return new Promise((resolve, reject) => {
+          this.axios.delete(url, config)
+            .then(response => resolve(response.data.watching))
+            .catch(reject)
+        })
+      }
+      else {
+        console.error('[Form.vue] Unsuported setNotification value of type ' + (typeof value) + ': ' + value)
+        return Promise.reject(new Error('Internal error'))
+      }
+    },
     includes (terms, {field, list}) {
       const token = terms.toLowerCase()
       return list.filter(item => ('' + item[field]).toLowerCase().includes(token))
