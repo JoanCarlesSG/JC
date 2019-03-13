@@ -8,7 +8,7 @@
             <div v-for="(item, index) in queuedPhotos" :key="item.id"
                 class="sync-item"
               >
-              <img :src="item.src" style="height: 40px" />
+              <authenticated-img :src="item.src" style="height: 40px" />
               <q-transition enter="fadeIn" leave="fadeOut">
                 <div class="spin" v-if="sharedState.queue.running && (sharedState.queue.uploading == item)"
                   ><q-icon name="sync" class="animate-spin-reverse"
@@ -34,6 +34,7 @@
 
 <script>
 import Vue from 'vue'
+import AuthenticatedImg from './AuthenticatedImg.vue'
 
 import {
   QIcon,
@@ -43,6 +44,7 @@ import {
 
 export default {
   components: {
+    AuthenticatedImg,
     QIcon,
     QSlideTransition,
     QTransition

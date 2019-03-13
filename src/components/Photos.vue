@@ -14,7 +14,7 @@
 
     <q-card inline v-if="displayPhoto(item)" v-for="item in photos" :key="item.id" :id="'photo_' + item.id">
       <q-card-media>
-        <img :src="getItemUrl(item)" style="height: auto; width: 100%">
+        <authenticated-img :src="item.src" style="height: auto; width: 100%" />
       </q-card-media>
       <q-card-title>
         <div style="font-size: 16px; line-height: 18px">{{ item.description }}</div>
@@ -52,6 +52,7 @@ import {
 } from 'quasar'
 
 import ImageInputResizer from './ImageInputResizer.vue'
+import AuthenticatedImg from './AuthenticatedImg.vue'
 
 export default {
   props: {
@@ -59,6 +60,7 @@ export default {
     readonly: {type: Boolean, required: true}
   },
   components: {
+    AuthenticatedImg,
     QInput,
     QSelect,
     QBtn,
@@ -76,18 +78,6 @@ export default {
     }
   },
   methods: {
-    getItemUrl (item) {
-      if (item.src.startsWith('file:') ||
-          item.src.startsWith('blob:file:')) {
-        return item.src
-      }
-      else if (item.src.startsWith('blob:http')) {
-        return item.src
-      }
-      else {
-        return item.src + '?access_token=' + this.sharedState.access_token
-      }
-    },
     newPhoto (abans, gallery) {
       let photo = {}
       if (abans) {
