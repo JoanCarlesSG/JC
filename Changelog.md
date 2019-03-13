@@ -1,6 +1,12 @@
 Changelog
 =========
 
+1.1.0
+-----
+- Nou apartat al formulari, només per supervisors:
+  - Possibilitat de canviar els usuaris assignats a la feina
+  - Subscripció a l'avís de tancament de feina
+
 1.0.1
 -----
 - Filtrar els tipus de verd pel lot seleccionat

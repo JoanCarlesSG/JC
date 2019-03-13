@@ -15,7 +15,7 @@ import Vue from 'vue'
 // Vue.API_ROOT = 'http://xenial.local'
 // Vue.API_ROOT = 'http://127.0.0.1:8000'
 Vue.API_ROOT = 'https://terra.girona.cat/apps/feines_proveidors'
-Vue.APP_VERSION = '1.0.1'
+Vue.APP_VERSION = '1.1.0'
 
 import moment from 'moment'
 import 'moment/locale/ca'
