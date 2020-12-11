@@ -32,8 +32,14 @@
         {{ error }}
       </q-alert>
 
+      <q-tabs no-pane-border v-model="selectedTab">
+        <q-tab default slot="title" name="tab-actuals" label="Actuals" />
+        <q-tab slot="title" name="tab-futures" label="Futures" />
+
+        <q-tab-pane name="tab-actuals" style="padding: 0">
+
       <q-list v-if="!sharedState.fatalState" no-border striped>
-        <q-list-header>Feines</q-list-header>
+        <q-list-header>Feines actuals</q-list-header>
         <q-alert
           v-if="jobs.length === 0"
           icon="info"
@@ -41,17 +47,46 @@
           style="margin: 0 15px"
         >Per afegir una feina, feu servir el botó situat a la part inferior dreta de la pantalla
         </q-alert>
-        <q-item v-for="item in jobs" :key="item.id" :to="'/form/' + item.id">
+        <q-item v-for="item in currentJobs" :key="item.id" :to="'/form/' + item.id">
             <q-item-side left :icon="getItemIcon(item)" />
             <q-item-main>
               <q-item-tile label>{{ getItemLabel(item) }}</q-item-tile>
               <q-item-tile sublabel>{{ getItemSublabel(item) }}</q-item-tile>
-              <q-item-tile sublabel>{{ $moment(item.created_on).format('L') }}</q-item-tile>
+              <q-item-tile v-if="item.status === 'planned'" sublabel>{{ $moment(item.planned_start_date).format('L') }}</q-item-tile>
+              <q-item-tile v-else sublabel>{{ $moment(item.updated_on).format('L') }}</q-item-tile>
             </q-item-main>
             <q-item-side right icon="keyboard_arrow_right" />
           </router-link>
         </q-item>
       </q-list>
+        </q-tab-pane>
+
+        <q-tab-pane name="tab-futures" style="padding: 0">
+
+      <q-list v-if="!sharedState.fatalState" no-border striped>
+        <q-list-header>Feines futures</q-list-header>
+        <q-alert
+          v-if="jobs.length === 0"
+          icon="info"
+          color="positive"
+          style="margin: 0 15px"
+        >No teniu cap tasca programada
+        </q-alert>
+        <q-item v-for="item in futureJobs" :key="item.id" :to="'/form/' + item.id">
+            <q-item-side left :icon="getItemIcon(item)" />
+            <q-item-main>
+              <q-item-tile label>{{ getItemLabel(item) }}</q-item-tile>
+              <q-item-tile sublabel>{{ getItemSublabel(item) }}</q-item-tile>
+              <q-item-tile v-if="item.status === 'planned'" sublabel>{{ $moment(item.planned_start_date).format('L') }}</q-item-tile>
+              <q-item-tile v-else sublabel>{{ $moment(item.updated_on).format('L') }}</q-item-tile>
+            </q-item-main>
+            <q-item-side right icon="keyboard_arrow_right" />
+          </router-link>
+        </q-item>
+      </q-list>
+        </q-tab-pane>
+
+      </q-tabs>
     </div>
   </q-pull-to-refresh>
 </div>
@@ -73,6 +108,9 @@ import {
   QItemMain,
   QItemTile,
   QFixedPosition,
+  QTabs,
+  QTab,
+  QTabPane,
   QTransition,
   QAlert,
   QPullToRefresh
@@ -102,6 +140,9 @@ export default {
     QItemMain,
     QItemTile,
     QFixedPosition,
+    QTabs,
+    QTab,
+    QTabPane,
     QTransition,
     QAlert,
     Sync,
@@ -109,11 +150,20 @@ export default {
   },
   data () {
     return {
-      jobs: {},
+      jobs: [],
+      selectedTab: 'tab-actuals',
       sharedState: Vue.store.state
     }
   },
   computed: {
+    currentJobs () {
+      const tomorrow = this.$moment().startOf('day').add(1, 'day')
+      return this.jobs.filter(job => !this.isFutureJob(job, tomorrow, job.status))
+    },
+    futureJobs () {
+      const tomorrow = this.$moment().startOf('day').add(1, 'day')
+      return this.jobs.filter(job => this.isFutureJob(job, tomorrow, job.status))
+    }
   },
   beforeRouteEnter (to, from, next) {
     next(vm => {
@@ -172,6 +222,9 @@ export default {
       }
       else if (item.status === 'done') {
         return 'check'
+      }
+      else if (item.status === 'planned') {
+        return 'alarm'
       }
       else if (item.status === 'pending') {
         return 'hourglass_empty'
@@ -234,6 +287,17 @@ export default {
       else {
         return ''
       }
+    },
+    isFutureJob (job, futureDate) {
+      if (job.status !== 'planned') {
+        return false
+      }
+      const plannedStart = this.$moment(job.planned_start_date)
+      if (plannedStart < futureDate) {
+        return false
+      }
+
+      return true
     },
     refresher (done) {
       // done - Function to call when you made all necessary updates.

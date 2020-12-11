@@ -539,6 +539,9 @@ export default {
         if (this.model.status === 'pending') {
           this.model.status = 'open'
         }
+        if (this.model.status === 'planned') {
+          this.model.status = 'open'
+        }
         this.modelSave()
       }
     },

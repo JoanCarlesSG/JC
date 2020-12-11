@@ -14,6 +14,7 @@ import Vue from 'vue'
 
 // Vue.API_ROOT = 'http://xenial.local'
 // Vue.API_ROOT = 'http://127.0.0.1:8000'
+// Vue.API_ROOT = 'http://feines-proveidors.ajgirona'
 Vue.API_ROOT = 'https://terra.girona.cat/apps/feines_proveidors'
 Vue.APP_VERSION = '1.1.0'
 
@@ -143,6 +144,18 @@ var store = {
           })
           if (!job.updated_on) {
             job.updated_on = 0
+          }
+          if (!job.planned_start_date) {
+            job.planned_start_date = null
+          }
+          if (!job.planned_start_time) {
+            job.planned_start_time = null
+          }
+          if (!job.planned_end_date) {
+            job.planned_end_date = null
+          }
+          if (!job.planned_end_time) {
+            job.planned_end_time = null
           }
         })
       }
@@ -310,6 +323,11 @@ var store = {
           Vue.set(job, 'updated_on', remoteJob.updated_on)
         }
 
+        job.planned_start_date = remoteJob.planned_start_date
+        job.planned_start_time = remoteJob.planned_start_time
+        job.planned_end_date = remoteJob.planned_end_date
+        job.planned_end_time = remoteJob.planned_end_time
+
         remoteJob.photos.forEach(remotePhoto => {
           console.log('remotePhoto', remotePhoto)
           let photo = self.state.photoCache[remotePhoto.id]
@@ -354,6 +372,11 @@ var store = {
         job._is_remote = false
       }
     })
+
+    // forçar actualització dels llistats per reactivitat
+    const jobs = this.state.jobs
+    this.state.jobs = null
+    this.state.jobs = jobs
   },
   jobsSave: function () {
     console.info('Saving jobs...')
