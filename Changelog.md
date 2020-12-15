@@ -1,6 +1,10 @@
 Changelog
 =========
 
+1.2.0
+-----
+- Suport per a feines programades
+
 1.1.0
 -----
 - Nou apartat al formulari, només per supervisors:
